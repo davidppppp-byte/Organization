@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Deafbakery - 數位戰情室</title>
+    <title>Deafbakery - 溫暖職人組織圖</title>
     
     <!-- 1. 載入 Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -15,7 +15,7 @@
     <!-- 3. 載入 Babel -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-    <!-- 4. 設定 Tailwind 擴充樣式 (高級插畫風) -->
+    <!-- 4. 設定 Tailwind 擴充樣式 (溫暖職人風) -->
     <script>
         tailwind.config = {
             theme: {
@@ -23,36 +23,44 @@
                     colors: {
                         artisan: {
                             bg: '#F9F7F2',        // 紙張米白
-                            ink: '#2C2321',       // 墨色深棕 (文字/邊框)
-                            gold: '#C69C6D',      // 烘焙金
+                            ink: '#4A3B32',       // 溫暖深褐 (文字/邊框)
+                            gold: '#D4A373',      // 烘焙金
                             cream: '#FFFDF5',     // 奶油白 (卡片背景)
-                            accent: '#E65100',    // 活力橘 (強調)
-                            gray: '#8D8987',      // 質感灰
+                            accent: '#E76F51',    // 磚紅/活力橘 (強調)
+                            gray: '#9C8E85',      // 質感灰
                             
-                            // 部門色系 (低飽和莫蘭迪色)
-                            red: '#F2D7D5',
-                            blue: '#D6EAF8',
-                            green: '#D5F5E3',
-                            purple: '#EBDEF0',
-                            yellow: '#FCF3CF',
+                            // 部門色系 (低飽和手繪感)
+                            red: '#F4DCD6',       // 柔粉
+                            blue: '#D6E4F0',      // 霧藍
+                            green: '#DBE7C9',     // 抹茶綠
+                            purple: '#E6DEEB',    // 薰衣草
+                            yellow: '#FDF6D3',    // 卡士達黃
                         }
                     },
                     boxShadow: {
-                        'ink': '4px 4px 0px 0px #2C2321', // 實心手繪陰影
-                        'ink-sm': '2px 2px 0px 0px #2C2321',
-                        'ink-hover': '6px 6px 0px 0px #2C2321',
+                        'sketch': '3px 3px 0px 0px #4A3B32', // 手繪風實心陰影
+                        'sketch-sm': '1.5px 1.5px 0px 0px #4A3B32',
+                        'sketch-hover': '5px 5px 0px 0px #D4A373',
+                    },
+                    borderRadius: {
+                        'hand': '255px 15px 225px 15px / 15px 225px 15px 255px', // 模擬手繪不規則圓角
                     },
                     fontFamily: {
                         serif: ['"Noto Serif TC"', 'serif'],
-                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                        sans: ['"Zen Maru Gothic"', '"Noto Sans TC"', 'sans-serif'],
                     },
                     animation: {
                         'float': 'float 6s ease-in-out infinite',
+                        'wiggle': 'wiggle 3s ease-in-out infinite',
                     },
                     keyframes: {
                         float: {
                             '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-5px)' },
+                            '50%': { transform: 'translateY(-4px)' },
+                        },
+                        wiggle: {
+                            '0%, 100%': { transform: 'rotate(-1deg)' },
+                            '50%': { transform: 'rotate(1deg)' },
                         }
                     }
                 }
@@ -61,25 +69,21 @@
     </script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700&family=Noto+Serif+TC:wght@600;900&display=swap');
 
         body { 
-            font-family: 'Noto Sans TC', sans-serif; 
+            font-family: 'Zen Maru Gothic', 'Noto Sans TC', sans-serif; 
             background-color: #F9F7F2;
-            color: #2C2321;
+            color: #4A3B32;
             /* 紙張紋理效果 */
-            background-image: radial-gradient(#C69C6D 0.5px, transparent 0.5px), radial-gradient(#C69C6D 0.5px, #F9F7F2 0.5px);
-            background-size: 20px 20px;
-            background-position: 0 0, 10px 10px;
-            background-blend-mode: multiply;
-            opacity: 0.98;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23D4A373' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
         }
 
         /* 自定義捲軸 */
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #C69C6D; border-radius: 4px; border: 2px solid #F9F7F2; }
-        ::-webkit-scrollbar-thumb:hover { background: #2C2321; }
+        ::-webkit-scrollbar-thumb { background: #D4A373; border-radius: 10px; border: 3px solid #F9F7F2; }
+        ::-webkit-scrollbar-thumb:hover { background: #4A3B32; }
     </style>
 </head>
 <body>
@@ -87,35 +91,56 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect, useRef, useMemo } = React;
+        const { useState, useEffect, useRef, Component } = React;
 
-        // --- 1. Icons (精緻線條風格) ---
+        // --- Error Boundary (防當機守門員) ---
+        class ErrorBoundary extends Component {
+            constructor(props) { super(props); this.state = { hasError: false, error: null }; }
+            static getDerivedStateFromError(error) { return { hasError: true, error }; }
+            render() {
+                if (this.state.hasError) {
+                    return (
+                        <div className="flex items-center justify-center h-screen bg-artisan-bg p-10 text-center">
+                            <div className="bg-white p-8 rounded-hand border-2 border-dashed border-red-400 shadow-sketch">
+                                <h2 className="text-2xl font-bold text-artisan-accent mb-4">哎呀！資料結構有點小問題</h2>
+                                <p className="text-artisan-ink mb-4">可能是因為人員之間的「上下級關係」產生了無限迴圈。</p>
+                                <p className="text-xs text-gray-500 font-mono bg-gray-100 p-2 rounded">{this.state.error.toString()}</p>
+                                <button onClick={() => window.location.reload()} className="mt-6 px-6 py-2 bg-artisan-ink text-white rounded-lg font-bold">重新整理</button>
+                            </div>
+                        </div>
+                    );
+                }
+                return this.props.children;
+            }
+        }
+
+        // --- 1. Icons (手繪圓潤風格) ---
         const Icon = ({ path, className }) => (
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className={className}>
                 {path}
             </svg>
         );
 
         const Icons = {
-            Search: (props) => <Icon {...props} path={<><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></>} />,
-            ZoomIn: (props) => <Icon {...props} path={<><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/><line x1="11" x2="11" y1="8" y2="14"/><line x1="8" x2="14" y1="11" y2="11"/></>} />,
-            ZoomOut: (props) => <Icon {...props} path={<><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/><line x1="8" x2="14" y1="11" y2="11"/></>} />,
-            Edit: (props) => <Icon {...props} path={<><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></>} />,
-            Save: (props) => <Icon {...props} path={<><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></>} />,
-            X: (props) => <Icon {...props} path={<><path d="M18 6 6 18"/><path d="m6 6 12 12"/></>} />,
-            User: (props) => <Icon {...props} path={<><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></>} />,
-            Users: (props) => <Icon {...props} path={<><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></>} />,
-            Building: (props) => <Icon {...props} path={<><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></>} />,
-            Layers: (props) => <Icon {...props} path={<><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></>} />,
-            List: (props) => <Icon {...props} path={<><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></>} />,
-            Layout: (props) => <Icon {...props} path={<><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><line x1="3" x2="21" y1="9" y2="9"/><line x1="9" x2="9" y1="9" y2="21"/></>} />,
-            Lock: (props) => <Icon {...props} path={<><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></>} />,
-            KeyRound: (props) => <Icon {...props} path={<><path d="M2 18v3c0 .6.4 1 1 1h4v-3h3v-3h2l1.4-1.4a6.5 6.5 0 1 0-4-4Z"/><circle cx="16.5" cy="7.5" r=".5"/></>} />,
-            Chef: (props) => <Icon {...props} path={<><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 9.08 0A5.11 5.11 0 0 1 18.59 6 4 4 0 0 1 20 13.87V21H6Z"/><line x1="6" y1="17" x2="20" y2="17"/></>} />
+            Search: (props) => <Icon {...props} path={<path fillRule="evenodd" d="M10.5 3.75a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5zM5.7 17.25a8.25 8.25 0 1110.25-10.25 8.25 8.25 0 01-10.25 10.25zm9.9 1.8l3.9 3.9a.75.75 0 11-1.06 1.06l-3.9-3.9a.75.75 0 111.06-1.06z" clipRule="evenodd" />} />,
+            ZoomIn: (props) => <Icon {...props} path={<path fillRule="evenodd" d="M10.5 3.75a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5zM5.7 17.25a8.25 8.25 0 1110.25-10.25 8.25 8.25 0 01-10.25 10.25zm9.9 1.8l3.9 3.9a.75.75 0 11-1.06 1.06l-3.9-3.9a.75.75 0 111.06-1.06zM11.25 7.5a.75.75 0 00-1.5 0v2.25H7.5a.75.75 0 000 1.5h2.25v2.25a.75.75 0 001.5 0v-2.25h2.25a.75.75 0 000-1.5h-2.25V7.5z" clipRule="evenodd" />} />,
+            ZoomOut: (props) => <Icon {...props} path={<path fillRule="evenodd" d="M10.5 3.75a6.75 6.75 0 100 13.5 6.75 6.75 0 000-13.5zM5.7 17.25a8.25 8.25 0 1110.25-10.25 8.25 8.25 0 01-10.25 10.25zm9.9 1.8l3.9 3.9a.75.75 0 11-1.06 1.06l-3.9-3.9a.75.75 0 111.06-1.06zM7.5 10.5a.75.75 0 000 1.5h6a.75.75 0 000-1.5h-6z" clipRule="evenodd" />} />,
+            Edit: (props) => <Icon {...props} path={<path d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32l8.4-8.4z" /><path d="M5.25 5.25a3 3 0 00-3 3v10.5a3 3 0 003 3h10.5a3 3 0 003-3V13.5a.75.75 0 00-1.5 0v5.25a1.5 1.5 0 01-1.5 1.5H5.25a1.5 1.5 0 01-1.5-1.5V8.25a1.5 1.5 0 011.5-1.5h5.25a.75.75 0 000-1.5H5.25z" />} />,
+            Save: (props) => <Icon {...props} path={<path fillRule="evenodd" d="M7.5 3.75A1.5 1.5 0 006 5.25v13.5a1.5 1.5 0 001.5 1.5h9a1.5 1.5 0 001.5-1.5V7.65a1.5 1.5 0 00-.44-1.06l-2.65-2.65a1.5 1.5 0 00-1.06-.44H7.5zm1.5 1.5h4.5a.75.75 0 010 1.5h-4.5a.75.75 0 010-1.5zM7.5 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM8.25 15a.75.75 0 000 1.5h7.5a.75.75 0 000-1.5h-7.5z" clipRule="evenodd" />} />,
+            X: (props) => <Icon {...props} path={<path fillRule="evenodd" d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z" clipRule="evenodd" />} />,
+            User: (props) => <Icon {...props} path={<path fillRule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z" clipRule="evenodd" />} />,
+            Users: (props) => <Icon {...props} path={<path d="M4.5 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM14.25 8.625a3.375 3.375 0 116.75 0 3.375 3.375 0 01-6.75 0zM1.5 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM17.25 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122z" />} />,
+            Building: (props) => <Icon {...props} path={<path fillRule="evenodd" d="M4.5 2.25a.75.75 0 00-.75.75v18a.75.75 0 00.75.75h15a.75.75 0 00.75-.75V3a.75.75 0 00-.75-.75H4.5zm1.5 1.5h12v16.5H6V3.75zm3 3.75a.75.75 0 01.75-.75h3a.75.75 0 01.75.75v2.25a.75.75 0 01-.75.75h-3a.75.75 0 01-.75-.75V7.5zm.75 6a.75.75 0 00-1.5 0v2.25a.75.75 0 001.5 0V13.5zM12 13.5a.75.75 0 00-1.5 0v2.25a.75.75 0 001.5 0V13.5zm3.75-.75a.75.75 0 01.75.75v2.25a.75.75 0 01-.75.75h-3a.75.75 0 01-.75-.75V13.5a.75.75 0 01.75-.75h3z" clipRule="evenodd" />} />,
+            Layers: (props) => <Icon {...props} path={<path d="M11.25 3a.75.75 0 00-1.5 0v2.25a.75.75 0 001.5 0V3zM15.75 3a.75.75 0 00-1.5 0v2.25a.75.75 0 001.5 0V3zM19.5 3.75a.75.75 0 01.75.75v15a.75.75 0 01-.75.75H4.5a.75.75 0 01-.75-.75V4.5a.75.75 0 01.75-.75h15zM6 5.25v13.5h12V5.25H6zM10.5 8.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zM15 8.25a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zM10.5 12.75a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V13.5a.75.75 0 01.75-.75zM15 12.75a.75.75 0 01.75.75v2.25a.75.75 0 01-1.5 0V13.5a.75.75 0 01.75-.75z" />} />,
+            List: (props) => <Icon {...props} path={<path fillRule="evenodd" d="M2.25 6a.75.75 0 01.75-.75h18a.75.75 0 010 1.5H3a.75.75 0 01-.75-.75zM2.25 12a.75.75 0 01.75-.75h18a.75.75 0 010 1.5H3a.75.75 0 01-.75-.75zM2.25 18a.75.75 0 01.75-.75h18a.75.75 0 010 1.5H3a.75.75 0 01-.75-.75z" clipRule="evenodd" />} />,
+            Layout: (props) => <Icon {...props} path={<path fillRule="evenodd" d="M4.5 2.25A2.25 2.25 0 002.25 4.5v15a2.25 2.25 0 002.25 2.25h15a2.25 2.25 0 002.25-2.25V4.5a2.25 2.25 0 00-2.25-2.25H4.5zm-.75 2.25a.75.75 0 01.75-.75h15a.75.75 0 01.75.75v4.5a.75.75 0 01-.75.75H4.5a.75.75 0 01-.75-.75V4.5zm0 6a.75.75 0 01.75-.75h4.5a.75.75 0 01.75.75v9.75a.75.75 0 01-.75.75H4.5a.75.75 0 01-.75-.75V10.5zm6.75-.75a.75.75 0 00-1.5 0v9.75a.75.75 0 001.5 0V9.75zM20.25 9a.75.75 0 01-.75.75h-4.5a.75.75 0 01-.75-.75V9a.75.75 0 011.5 0v-.75a.75.75 0 01.75-.75h4.5a.75.75 0 01.75.75v9.75a.75.75 0 01-.75.75H12a.75.75 0 01-.75-.75V9z" clipRule="evenodd" />} />,
+            Lock: (props) => <Icon {...props} path={<path fillRule="evenodd" d="M12 1.5a5.25 5.25 0 00-5.25 5.25v3a3 3 0 00-3 3v6.75a3 3 0 003 3h10.5a3 3 0 003-3v-6.75a3 3 0 00-3-3v-3c0-2.9-2.35-5.25-5.25-5.25zm3.75 8.25v-3a3.75 3.75 0 10-7.5 0v3h7.5z" clipRule="evenodd" />} />,
+            KeyRound: (props) => <Icon {...props} path={<path fillRule="evenodd" d="M15.75 1.5a6.75 6.75 0 00-6.65 7.93L2.868 15.671a.75.75 0 00-.22.434l-.003.04-.004.056v3.002c0 .414.336.75.75.75h3a.75.75 0 00.75-.75v-1.5h1.5a.75.75 0 00.75-.75v-1.5h1.5a.75.75 0 00.75-.75V14l3.98-3.98A6.75 6.75 0 0015.75 1.5zm0 3a3.75 3.75 0 110 7.5 3.75 3.75 0 010-7.5z" clipRule="evenodd" />} />,
+            Chef: (props) => <Icon {...props} path={<path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 9.08 0A5.11 5.11 0 0 1 18.59 6 4 4 0 0 1 20 13.87V21H6Z"/><path d="M6 17h14" />} />,
+            Heart: (props) => <Icon {...props} path={<path d="M11.645 20.91l-.007-.003-.022-.012a15.247 15.247 0 01-.383-.218 25.18 25.18 0 01-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0112 5.052 5.5 5.5 0 0116.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 01-4.244 3.17 15.247 15.247 0 01-.383.219l-.022.012-.007.004-.003.001a.752.752 0 01-.704 0l-.003-.001z" />} />
         };
 
-        // --- 2. 核心資料 (2024/12/23 最新版) ---
-        // 已經轉為標準 CSV 格式，避免 Tab 跑版問題
+        // --- 2. 初始資料 ---
         const INITIAL_CSV = `ID,Name,TechTitle,MgmtTitle,ParentID
 CEO,潘信宏,,執行長,
 COO,潘重恩,,營運長,CEO
@@ -234,35 +259,36 @@ G_BAKE,烘烤組,,組別,D_PROD
 顧庭瑋,顧庭瑋,,兼任經理,D_SALES
 潘全恩,潘全恩,,資訊長,G_IT`;
 
-        // --- 3. 高級插畫風格邏輯 ---
+        // --- 3. 溫暖插畫風格邏輯 ---
 
         const getLevelStyle = (level, mgmtTitle) => {
             const title = mgmtTitle || ''; 
-            const baseClass = "relative overflow-hidden transition-all duration-300 border-2 border-artisan-ink shadow-ink bg-artisan-cream";
+            // 基礎卡片樣式：圓潤、手繪邊框、柔和陰影、浮動動畫
+            const baseClass = "rounded-hand border-2 border-dashed transition-all duration-300 relative overflow-hidden group shadow-sketch hover:shadow-sketch-hover hover:-translate-y-1";
             
-            // 執行長/高層 - 金色系
+            // 執行長/高層 - 溫暖黃色系
             if (title.includes('執行長') || title.includes('董事長') || title.includes('資訊長')) {
-                return `${baseClass} bg-artisan-yellow/50 hover:bg-artisan-yellow hover:shadow-ink-hover hover:-translate-y-1`;
+                return `${baseClass} bg-artisan-yellow/50 border-artisan-gold text-artisan-ink`;
             }
-            // 營運長/總監 - 橘色系
+            // 營運長/總監 - 柔和橘色系
             if (title.includes('營運長') || title.includes('總經理') || title.includes('總監')) {
-                return `${baseClass} bg-artisan-red/50 hover:bg-artisan-red hover:shadow-ink-hover hover:-translate-y-1`;
+                return `${baseClass} bg-artisan-red/50 border-artisan-accent text-artisan-ink`;
             }
-            // 中心 - 藍色系
+            // 中心 - 溫暖藍色系
             if (title.includes('中心')) {
-                return `${baseClass} bg-artisan-blue/50 hover:bg-artisan-blue hover:shadow-ink-hover hover:-translate-y-1`;
+                return `${baseClass} bg-artisan-blue/50 border-artisan-ink/30 text-artisan-ink`;
             }
-            // 部門 - 綠色系
+            // 部門/經理 - 柔和綠色系
             if (title.includes('部門') || title.includes('經理') || title.includes('襄理') || title.includes('主任')) {
-                return `${baseClass} bg-artisan-green/50 hover:bg-artisan-green hover:shadow-ink-hover hover:-translate-y-1`;
+                return `${baseClass} bg-artisan-green/50 border-artisan-ink/30 text-artisan-ink`;
             }
-            // 組別 - 紫色系
+            // 組別/組長 - 溫暖紫色系
             if (title.includes('組別') || title.includes('組長') || title.includes('幹部') || title.includes('領班') || title.includes('線長')) {
-                return `${baseClass} bg-artisan-purple/50 hover:bg-artisan-purple hover:shadow-ink-hover hover:-translate-y-1`;
+                return `${baseClass} bg-artisan-purple/50 border-artisan-ink/30 text-artisan-ink`;
             }
 
-            // 一般 - 簡約白
-            return `${baseClass} hover:bg-white hover:shadow-ink-hover hover:-translate-y-1`; 
+            // 一般同仁 - 簡約白
+            return `${baseClass} bg-white border-artisan-ink/20 text-artisan-ink hover:border-artisan-gold`; 
         };
 
         // --- List View Component ---
@@ -285,43 +311,42 @@ G_BAKE,烘烤組,,組別,D_PROD
             const indent = level * 20;
             const hasMgmtTitle = node.mgmtTitle && node.mgmtTitle.trim() !== '';
 
-            // 列表樣式
-            let rowClass = "border-l-4 border-artisan-ink/20 hover:bg-artisan-gold/10";
-            let textClass = "text-artisan-ink font-medium";
-            
-            if (level === 0) { rowClass = "border-l-4 border-artisan-gold bg-artisan-gold/20"; textClass = "font-bold text-lg"; }
-            else if (level === 1) { rowClass = "border-l-4 border-artisan-ink bg-artisan-ink/5"; textClass = "font-bold"; }
+            // 列表背景邏輯 - 使用溫暖色塊
+            let rowBg = "bg-white/50";
+            let borderColor = "border-artisan-ink/20";
+            if (level === 0) { rowBg = "bg-artisan-gold/20"; borderColor = "border-artisan-gold"; }
+            else if (level === 1) { rowBg = "bg-artisan-ink/5"; borderColor = "border-artisan-ink"; }
             
             return (
-                <div className="w-full font-sans mb-1">
+                <div className="w-full my-2">
                     <div 
-                        className={`flex items-center p-3 cursor-pointer transition-all rounded-r-lg ${rowClass} ${isMatch ? 'bg-artisan-yellow border-artisan-accent' : ''}`}
+                        className={`flex items-center p-3 rounded-lg border-2 border-dashed cursor-pointer transition-colors shadow-sketch-sm hover:shadow-sketch hover:-translate-y-0.5 ${rowBg} ${borderColor} ${isMatch ? 'ring-2 ring-artisan-accent' : ''}`}
                         style={{ marginLeft: `${indent}px`, width: `calc(100% - ${indent}px)` }}
                         onClick={() => setExpanded(!expanded)}
                     >
-                        <div className="mr-3 w-6 flex justify-center text-artisan-ink">
+                        <div className="mr-3 text-artisan-ink w-6 flex justify-center">
                             {hasChildren ? (expanded ? '▼' : '▶') : <div className="w-2 h-2 bg-artisan-gray rounded-full"></div>}
                         </div>
                         
-                        <div className="flex-1 flex flex-wrap items-center gap-3">
-                            <span className={`${textClass}`}>
-                                {node.name}
-                            </span>
-                            {hasMgmtTitle && (
-                                <span className="text-xs px-2 py-0.5 border-2 border-artisan-ink rounded-full bg-white font-bold tracking-wide shadow-sm">
-                                    {node.mgmtTitle}
+                        <div className="flex-1 flex flex-wrap items-center gap-2">
+                            <div className="flex items-baseline gap-2">
+                                <span className={`font-medium tracking-wider ${level < 2 ? 'text-lg font-bold' : ''}`}>
+                                    {node.name}
                                 </span>
-                            )}
+                                {hasMgmtTitle && (
+                                    <span className={`text-xs px-2 py-1 rounded-full border border-dashed font-bold bg-white/80 border-artisan-ink/50`}>
+                                        {node.mgmtTitle}
+                                    </span>
+                                )}
+                            </div>
                             {node.techTitle && (
-                                <span className="text-sm text-artisan-gray italic">
-                                    {node.techTitle}
-                                </span>
+                                <div className="text-sm text-artisan-gray font-medium italic">({node.techTitle})</div>
                             )}
                         </div>
                     </div>
                     
                     {hasChildren && expanded && (
-                        <div className="animate-[fadeIn_0.3s_ease-out]">
+                        <div className="animate-[fadeIn_0.3s_ease-out] border-l-2 border-dashed border-artisan-ink/10 ml-4 pl-2">
                             {node.children.map(child => (
                                 <ListView key={child.id} node={child} level={level + 1} searchTerm={searchTerm} />
                             ))}
@@ -336,15 +361,11 @@ G_BAKE,烘烤組,,組別,D_PROD
             return (
                 <div className="flex flex-col items-center pt-6 relative">
                     {/* 手繪連接線 */}
-                    <div className="w-0.5 h-6 bg-artisan-ink -mt-6 mb-4"></div>
+                    <svg className="absolute top-0 left-1/2 -translate-x-1/2 -mt-2 w-6 h-8" viewBox="0 0 24 32">
+                        <path d="M12 0 L12 32" stroke="#4A3B32" strokeWidth="2" strokeDasharray="4 2" fill="none" strokeLinecap="round" />
+                    </svg>
                     
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 bg-white/80 border-2 border-artisan-ink p-4 rounded-lg shadow-ink relative">
-                        {/* 裝飾釘子 */}
-                        <div className="absolute top-2 left-2 w-2 h-2 rounded-full bg-artisan-ink/20"></div>
-                        <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-artisan-ink/20"></div>
-                        <div className="absolute bottom-2 left-2 w-2 h-2 rounded-full bg-artisan-ink/20"></div>
-                        <div className="absolute bottom-2 right-2 w-2 h-2 rounded-full bg-artisan-ink/20"></div>
-
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 bg-white/60 backdrop-blur-md p-5 rounded-hand border-2 border-dashed border-artisan-ink/30 shadow-sketch relative mt-4">
                         {nodes.map(node => {
                             const hasMgmtTitle = node.mgmtTitle && node.mgmtTitle.trim() !== '';
                             const isMatch = searchTerm && (
@@ -357,15 +378,15 @@ G_BAKE,烘烤組,,組別,D_PROD
                                 <div 
                                     key={node.id}
                                     className={`
-                                        flex flex-col p-3 bg-white rounded border-2 border-artisan-ink/20 w-40 hover:border-artisan-gold hover:shadow-md transition-all
-                                        ${isMatch ? 'ring-2 ring-artisan-accent bg-artisan-yellow' : ''}
+                                        flex flex-col p-3 bg-white rounded-lg border border-dashed border-artisan-ink/20 w-40 hover:border-artisan-gold hover:shadow-md transition-all group
+                                        ${isMatch ? 'ring-2 ring-artisan-accent shadow-sketch' : ''}
                                     `}
                                 >
-                                    <div className="flex items-center justify-between mb-1">
-                                        <span className="font-bold text-artisan-ink text-sm truncate">{node.name}</span>
-                                        {hasMgmtTitle && <span className="text-[10px] bg-artisan-ink text-white px-1.5 py-0.5 rounded-sm">{node.mgmtTitle}</span>}
+                                    <div className="flex items-center justify-between mb-2">
+                                        <span className="font-bold text-artisan-ink truncate group-hover:text-artisan-accent transition-colors">{node.name}</span>
+                                        {hasMgmtTitle && <span className="text-[10px] bg-artisan-purple text-artisan-ink border border-artisan-ink/20 px-1.5 py-0.5 rounded-full">{node.mgmtTitle}</span>}
                                     </div>
-                                    {node.techTitle && <span className="text-[11px] text-artisan-gray truncate font-medium">{node.techTitle}</span>}
+                                    {node.techTitle && <span className="text-xs text-artisan-gray truncate font-medium">{node.techTitle}</span>}
                                 </div>
                             );
                         })}
@@ -392,7 +413,7 @@ G_BAKE,烘烤組,,組別,D_PROD
             const isLeafGroup = hasChildren && level > 1 && node.children.length > 2 && node.children.every(child => !child.children || child.children.length === 0);
 
             const getIcon = () => {
-                const iconClass = "w-5 h-5 mr-2 opacity-80";
+                const iconClass = "w-5 h-5 mr-2 opacity-90 text-artisan-ink";
                 if (!hasMgmtTitle) return null;
                 if (node.mgmtTitle.includes('長') || node.mgmtTitle.includes('監')) return <Icons.User className={iconClass} />;
                 if (node.mgmtTitle.includes('中心')) return <Icons.Building className={iconClass} />;
@@ -402,18 +423,21 @@ G_BAKE,烘烤組,,組別,D_PROD
             }
 
             return (
-                <div className="flex flex-col items-center relative z-10">
+                <div className="flex flex-col items-center z-10 relative">
                     <div 
                         className={`
-                            px-6 py-4 m-4 w-60 min-h-[6rem] justify-center cursor-pointer rounded-lg
+                            px-6 py-4 m-4 w-64 min-h-[6rem] justify-center cursor-pointer rounded-lg
                             ${getLevelStyle(level, node.mgmtTitle)}
-                            ${isMatch ? 'ring-4 ring-artisan-accent scale-105' : ''}
-                            ${!expanded && hasChildren ? 'opacity-80 grayscale' : ''}
+                            ${isMatch ? 'ring-4 ring-artisan-accent shadow-sketch scale-105' : ''}
+                            ${!expanded && hasChildren ? 'opacity-80 grayscale-[30%]' : ''}
                         `}
                         onClick={() => setExpanded(!expanded)}
                     >
+                        {/* 裝飾圖案 */}
+                        <div className="absolute top-2 right-2 text-artisan-ink/10"><Icons.Heart className="w-5 h-5" /></div>
+
                         {hasMgmtTitle && (
-                            <div className="flex items-center text-lg font-black tracking-wider mb-2 border-b-2 border-dashed border-artisan-ink/20 pb-2 w-full justify-center text-artisan-ink">
+                            <div className="flex items-center text-xl font-bold tracking-wider mb-2 border-b-2 border-dashed border-artisan-ink/10 pb-2 w-full justify-center text-artisan-ink">
                                 {getIcon()}
                                 {node.mgmtTitle}
                             </div>
@@ -424,15 +448,15 @@ G_BAKE,烘烤組,,組別,D_PROD
                         </div>
 
                         {node.techTitle && (
-                            <div className={`text-sm mt-2 font-medium px-2 py-0.5 rounded text-center truncate text-artisan-gray
-                                ${hasMgmtTitle ? 'bg-white/50' : ''}
+                            <div className={`text-sm mt-3 font-medium tracking-tight px-3 py-1 rounded-full text-center border border-dashed
+                                ${hasMgmtTitle ? 'text-artisan-ink/70 bg-white/40 border-white/50' : 'text-artisan-gray bg-white/50 border-artisan-ink/10'}
                             `}>
                                 {node.techTitle}
                             </div>
                         )}
                         
                         {hasChildren && (
-                            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-white rounded-full w-8 h-8 flex items-center justify-center text-sm border-2 border-artisan-ink text-artisan-ink hover:bg-artisan-gold hover:text-white transition-colors z-20 shadow-sm cursor-pointer font-bold">
+                            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-artisan-cream rounded-full w-8 h-8 flex items-center justify-center text-lg border-2 border-dashed border-artisan-ink text-artisan-ink hover:bg-artisan-gold hover:text-white transition-colors z-20 shadow-sketch-sm cursor-pointer font-bold animate-bounce">
                                 {expanded ? '−' : '+'}
                             </div>
                         )}
@@ -444,14 +468,24 @@ G_BAKE,烘烤組,,組別,D_PROD
                                 <CompactNodeGroup nodes={node.children} level={level + 1} searchTerm={searchTerm} />
                             ) : (
                                 <div className="flex flex-col items-center animate-[fadeIn_0.5s_ease-out] relative mt-4">
-                                    <div className="w-0.5 h-8 bg-artisan-ink -mt-4"></div>
-                                    <div className="flex relative pt-6">
+                                    {/* 手繪垂直連接線 */}
+                                    <svg className="absolute top-0 left-1/2 -translate-x-1/2 -mt-4 w-6 h-12" viewBox="0 0 24 48">
+                                        <path d="M12 0 L12 48" stroke="#4A3B32" strokeWidth="2" strokeDasharray="4 2" fill="none" strokeLinecap="round" />
+                                    </svg>
+                                    
+                                    <div className="flex relative mt-8 pt-8">
                                         {node.children.length > 1 && (
-                                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[calc(100%-16rem)] h-0.5 bg-artisan-ink mt-0"></div>
+                                            // 手繪水平連接線
+                                            <svg className="absolute top-0 left-1/2 -translate-x-1/2 w-[calc(100%-16rem)] h-6 -mt-6" viewBox="0 0 100 24" preserveAspectRatio="none">
+                                                <path d="M0 12 L100 12" stroke="#4A3B32" strokeWidth="2" strokeDasharray="4 2" fill="none" strokeLinecap="round" vectorEffect="non-scaling-stroke" />
+                                            </svg>
                                         )}
                                         {node.children.map((child, index) => (
                                             <div key={child.id} className="flex flex-col items-center px-4 relative">
-                                                <div className="w-0.5 h-6 bg-artisan-ink absolute top-0 left-1/2 -translate-x-1/2 -mt-6"></div>
+                                                {/* 手繪子節點垂直連接線 */}
+                                                <svg className="absolute top-0 left-1/2 -translate-x-1/2 -mt-14 w-6 h-14" viewBox="0 0 24 56">
+                                                    <path d="M12 0 L12 56" stroke="#4A3B32" strokeWidth="2" strokeDasharray="4 2" fill="none" strokeLinecap="round" />
+                                                </svg>
                                                 <OrgNode node={child} level={level + 1} searchTerm={searchTerm} />
                                             </div>
                                         ))}
@@ -466,7 +500,11 @@ G_BAKE,烘烤組,,組別,D_PROD
 
         // --- Main App ---
         const App = () => {
-            const [csvData, setCsvData] = useState(INITIAL_CSV);
+            // Lazy initialization from localStorage
+            const [csvData, setCsvData] = useState(() => {
+                const saved = localStorage.getItem('mong_org_data');
+                return saved || INITIAL_CSV;
+            });
             const [treeData, setTreeData] = useState(null);
             const [searchTerm, setSearchTerm] = useState('');
             const [isEditing, setIsEditing] = useState(false);
@@ -478,13 +516,25 @@ G_BAKE,烘烤組,,組別,D_PROD
             const containerRef = useRef(null);
             const passwordInputRef = useRef(null);
 
+            // Save to localStorage whenever csvData changes
+            useEffect(() => {
+                localStorage.setItem('mong_org_data', csvData);
+            }, [csvData]);
+
+            // Reset Function
+            const handleReset = () => {
+                if(confirm('確定要重置為預設資料嗎？這將會覆蓋您目前的修改。')) {
+                    setCsvData(INITIAL_CSV);
+                }
+            };
+
             useEffect(() => {
                 if (window.innerWidth < 768) {
                     setViewMode('list');
                 }
             }, []);
 
-            // Robust Parser with Auto-Alignment for Tab-Separated Values
+            // Robust Parser with Auto-Alignment
             const parseCSV = (csvText) => {
                 try {
                     const lines = csvText.trim().split('\n');
@@ -531,19 +581,15 @@ G_BAKE,烘烤組,,組別,D_PROD
                         item.techTitle = (techIdx !== -1 && parts[techIdx]) ? parts[techIdx] : '';
                         
                         // Smart ParentID Detection
-                        // If header is detected, rely on index.
-                        // If not, and we have 5 columns, assume last column is ParentID
                         if (parentIdx !== -1 && parts[parentIdx]) {
                             item.parentId = parts[parentIdx];
                         } else if (parts.length >= 5) {
-                            // Only assign if it looks like an ID or Name, not empty
                             const lastVal = parts[parts.length-1];
                             if (lastVal) {
                                 item.parentId = lastVal; 
                             }
                         }
 
-                        // Auto-fill titles for organization nodes if missing
                         if (!item.mgmtTitle) {
                             if (item.id && item.id.startsWith('C_')) item.mgmtTitle = '中心';
                             if (item.id && item.id.startsWith('D_')) item.mgmtTitle = '部門';
@@ -560,17 +606,18 @@ G_BAKE,烘烤組,,組別,D_PROD
 
                     let potentialRoots = [];
                     items.forEach(el => {
+                        // FIX: Detect self-reference loop (e.g. parentId == id)
+                        if (el.parentId === el.id || el.parentId === el.name) {
+                             console.warn("Self-reference detected, skipping parent link for:", el.name);
+                             potentialRoots.push(el);
+                             return;
+                        }
+
                         if (!el.parentId || el.parentId === '') {
                             potentialRoots.push(el);
                             return;
                         }
                         
-                        // Prevent self-loop
-                        if (el.parentId === el.id || el.parentId === el.name) {
-                            potentialRoots.push(el);
-                            return;
-                        }
-
                         let parentEl = items[idMapping[el.parentId]];
                         
                         // Fallback: Find by name
@@ -580,7 +627,30 @@ G_BAKE,烘烤組,,組別,D_PROD
                         }
 
                         if (parentEl) {
-                            parentEl.children = [...(parentEl.children || []), el];
+                            // FIX: Cycle Detection
+                            // Simple check: walk up from parent to see if we hit 'el'
+                            let current = parentEl;
+                            let isCycle = false;
+                            let depth = 0;
+                            while(current && depth < 100) { // Limit depth to prevent infinite check
+                                if (current.id === el.id) {
+                                    isCycle = true;
+                                    break;
+                                }
+                                // Move up
+                                if (!current.parentId) break;
+                                let next = items[idMapping[current.parentId]];
+                                if (!next) next = items.find(i => i.name === current.parentId);
+                                current = next;
+                                depth++;
+                            }
+
+                            if (isCycle) {
+                                console.warn("Cycle detected for:", el.name, "->", parentEl.name);
+                                potentialRoots.push(el); // Treat as root to save it
+                            } else {
+                                parentEl.children = [...(parentEl.children || []), el];
+                            }
                         } else {
                             potentialRoots.push(el);
                         }
@@ -631,140 +701,18 @@ G_BAKE,烘烤組,,組別,D_PROD
             };
 
             return (
-                <div className="flex flex-col h-screen overflow-hidden relative font-sans text-artisan-ink">
-                    
-                    {/* Auth Modal */}
-                    {showAuthModal && (
-                        <div className="absolute inset-0 z-50 flex items-center justify-center bg-artisan-ink/50 backdrop-blur-sm animate-[fadeIn_0.3s_ease-out]">
-                            <div className="bg-artisan-bg border-4 border-artisan-ink p-8 rounded-lg shadow-ink w-full max-w-sm relative">
-                                <div className="flex justify-between items-center mb-6">
-                                    <h3 className="text-xl font-bold text-artisan-ink flex items-center gap-2 font-serif">
-                                        <Icons.Lock className="w-6 h-6 text-artisan-accent" /> 管理員驗證
-                                    </h3>
-                                    <button onClick={() => {setShowAuthModal(false); setAuthError(false); setPasswordInput('');}} className="text-artisan-gray hover:text-artisan-ink"><Icons.X className="w-6 h-6" /></button>
-                                </div>
-                                <form onSubmit={verifyPassword} className="space-y-6">
-                                    <div>
-                                        <label className="block text-sm font-bold text-artisan-ink mb-2">請輸入通行碼</label>
-                                        <div className="relative group">
-                                            <div className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-artisan-gray"><Icons.KeyRound className="w-5 h-5"/></div>
-                                            <input 
-                                                ref={passwordInputRef}
-                                                type="password" 
-                                                value={passwordInput}
-                                                onChange={(e) => setPasswordInput(e.target.value)}
-                                                className={`w-full pl-10 pr-4 py-3 bg-white border-2 rounded outline-none transition-all font-bold tracking-widest text-lg ${authError ? 'border-red-500' : 'border-artisan-ink focus:border-artisan-accent'}`}
-                                                placeholder="••••••••"
-                                            />
-                                        </div>
-                                        {authError && <p className="text-red-500 text-xs mt-2 font-bold">>> 密碼錯誤，請重試</p>}
-                                    </div>
-                                    <button type="submit" className="w-full bg-artisan-ink text-white py-3 rounded font-bold hover:bg-artisan-accent transition-all shadow-ink-sm hover:shadow-ink hover:-translate-y-0.5">確認進入</button>
-                                </form>
+                <ErrorBoundary>
+                    <div className="flex flex-col h-screen overflow-hidden relative font-sans text-artisan-ink">
+                        {showAuthModal && <div className="absolute inset-0 z-50 flex items-center justify-center bg-artisan-ink/50 backdrop-blur-sm animate-[fadeIn_0.3s_ease-out]"><div className="bg-artisan-bg border-4 border-dashed border-artisan-ink p-8 rounded-hand shadow-sketch w-full max-w-sm relative"><div className="flex justify-between items-center mb-6"><h3 className="text-xl font-bold text-artisan-ink flex items-center gap-2 font-serif"><Icons.Lock className="w-6 h-6 text-artisan-accent" /> 管理員驗證</h3><button onClick={() => {setShowAuthModal(false); setAuthError(false); setPasswordInput('');}}><Icons.X className="w-6 h-6 text-artisan-gray" /></button></div><form onSubmit={verifyPassword}><input ref={passwordInputRef} type="password" value={passwordInput} onChange={(e) => setPasswordInput(e.target.value)} className={`w-full pl-4 py-3 mb-4 bg-white border-2 border-dashed rounded-lg outline-none font-bold tracking-widest text-lg ${authError ? 'border-red-500' : 'border-artisan-ink'}`} placeholder="••••••••" /><button type="submit" className="w-full bg-artisan-ink text-white py-3 rounded-lg font-bold shadow-sketch-sm hover:shadow-sketch">確認進入</button></form></div></div>}
+                        <div className="bg-artisan-bg/95 border-b-4 border-dashed border-artisan-ink/10 p-4 flex flex-wrap items-center justify-between z-20 gap-4 shadow-sm"><div className="flex items-center gap-4"><div className="bg-artisan-gold p-2 rounded-lg border-2 border-artisan-ink text-white shadow-sketch-sm animate-[float_6s_ease-in-out_infinite]"><Icons.Chef className="w-8 h-8" /></div><div><h1 className="text-2xl md:text-3xl font-black text-artisan-ink font-serif tracking-wide">Deafbakery</h1><p className="text-xs text-artisan-gray font-bold tracking-widest uppercase">Premium Artisan Team</p></div></div><div className="flex bg-white p-1 rounded-lg border-2 border-dashed border-artisan-ink/20"><button onClick={() => setViewMode('chart')} className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-bold transition-all ${viewMode === 'chart' ? 'bg-artisan-ink text-white shadow-md' : 'text-artisan-gray'}`}><Icons.Layout className="w-5 h-5" /> <span className="hidden md:inline">圖表</span></button><button onClick={() => setViewMode('list')} className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-bold transition-all ${viewMode === 'list' ? 'bg-artisan-ink text-white shadow-md' : 'text-artisan-gray'}`}><Icons.List className="w-5 h-5" /> <span className="hidden md:inline">列表</span></button></div><div className="relative flex-1 max-w-xs group"><div className="absolute left-3 top-1/2 -translate-y-1/2 text-artisan-gray"><Icons.Search className="w-5 h-5"/></div><input type="text" placeholder="搜尋夥伴..." className="w-full pl-10 pr-4 py-2 bg-white border-2 border-dashed border-artisan-ink/20 rounded-lg outline-none font-bold shadow-sm" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} /></div><div className="flex items-center gap-3">{viewMode === 'chart' && <div className="flex bg-white rounded-lg border-2 border-dashed border-artisan-ink/20 p-1 hidden md:flex"><button onClick={() => handleZoom(-0.1)} className="p-2 hover:text-artisan-accent"><Icons.ZoomOut className="w-5 h-5" /></button><button onClick={() => handleZoom(0.1)} className="p-2 hover:text-artisan-accent"><Icons.ZoomIn className="w-5 h-5" /></button></div>}<button onClick={handleEditClick} className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-bold transition-all border-2 border-dashed shadow-sketch-sm hover:shadow-sketch ${isEditing ? 'bg-white border-artisan-accent text-artisan-accent' : 'bg-artisan-ink border-artisan-ink text-white'}`}>{isEditing ? <Icons.X className="w-5 h-5"/> : <Icons.Edit className="w-5 h-5"/>}<span className="hidden md:inline">{isEditing ? '關閉' : '編輯'}</span></button></div></div>
+                        <div className="flex flex-1 overflow-hidden relative z-10">
+                            <div className={`absolute top-0 left-0 h-full bg-artisan-cream/95 backdrop-blur-xl shadow-sketch z-40 transition-transform duration-300 flex flex-col w-full md:w-1/3 max-w-lg border-r-4 border-dashed border-artisan-ink/10 ${isEditing ? 'translate-x-0' : '-translate-x-full'}`}><div className="p-5 border-b-4 border-dashed border-artisan-ink/10 bg-artisan-bg flex justify-between items-center"><h2 className="font-bold flex items-center gap-2 text-artisan-ink text-xl"><Icons.Edit className="w-6 h-6 text-artisan-accent" /> 資料維護中心</h2><button onClick={() => setIsEditing(false)}><Icons.X className="w-6 h-6 text-artisan-gray" /></button></div><div className="flex-1 p-6 overflow-auto flex flex-col gap-4"><div className="bg-artisan-yellow/50 p-4 rounded-lg border-2 border-dashed border-artisan-gold text-sm font-medium shadow-sm">👉 系統準備就緒。<br/>👉 請貼上 Excel 資料 (Tab分隔)。</div><textarea className="flex-1 w-full p-4 border-2 border-dashed border-artisan-ink/20 rounded-lg bg-white font-mono text-sm shadow-inner whitespace-pre" value={csvData} onChange={(e) => setCsvData(e.target.value)} spellCheck="false" /></div><div className="p-6 border-t-4 border-dashed border-artisan-ink/10 bg-artisan-bg flex gap-2"><button onClick={handleReset} className="w-1/3 bg-artisan-gray text-white py-4 rounded-lg font-bold shadow-sketch-sm hover:shadow-sketch">重置</button><button onClick={() => setIsEditing(false)} className="w-2/3 bg-artisan-gold text-white py-4 rounded-lg font-bold shadow-sketch hover:shadow-sketch flex justify-center gap-2"><Icons.Save className="w-5 h-5"/> 確認更新</button></div></div>
+                            <div className="flex-1 overflow-auto relative bg-transparent" ref={containerRef}>
+                                {viewMode === 'list' ? <div className="max-w-3xl mx-auto p-4 md:p-10 min-h-full"><div className="bg-white/80 backdrop-blur-sm rounded-hand border-2 border-dashed border-artisan-ink/10 p-6 shadow-sketch"><div className="pb-4 border-b-2 border-dashed border-artisan-ink/10 text-sm font-bold text-artisan-gray mb-4 flex justify-between tracking-widest uppercase"><span>Personnel List</span><span>Online</span></div>{treeData ? <ListView node={treeData} searchTerm={searchTerm} /> : <div className="p-12 text-center text-artisan-gray font-bold animate-pulse">無資料...</div>}</div></div> : <div className="min-w-full min-h-full relative cursor-move" onMouseDown={(e) => { const ele = containerRef.current; if (!ele) return; ele.style.cursor = 'grabbing'; ele.style.userSelect = 'none'; const startX = e.pageX - ele.offsetLeft; const startY = e.pageY - ele.offsetTop; const scrollLeft = ele.scrollLeft; const scrollTop = ele.scrollTop; const mouseMoveHandler = (e) => { const x = e.pageX - ele.offsetLeft; const y = e.pageY - ele.offsetTop; ele.scrollLeft = scrollLeft - (x - startX) * 1.5; ele.scrollTop = scrollTop - (y - startY) * 1.5; }; const mouseUpHandler = () => { ele.style.cursor = 'move'; ele.style.removeProperty('user-select'); document.removeEventListener('mousemove', mouseMoveHandler); document.removeEventListener('mouseup', mouseUpHandler); }; document.addEventListener('mousemove', mouseMoveHandler); document.addEventListener('mouseup', mouseUpHandler); }}><div className="min-w-max min-h-max p-10 md:p-20 flex justify-center origin-top transition-transform duration-300 ease-out" style={{ transform: `scale(${scale})` }}>{treeData ? <OrgNode node={treeData} level={0} searchTerm={searchTerm} /> : <div className="text-center text-artisan-gold mt-20 font-bold text-xl animate-pulse">正在繪製...</div>}</div></div>}
                             </div>
-                        </div>
-                    )}
-
-                    {/* Toolbar */}
-                    <div className="bg-artisan-bg/95 border-b-4 border-artisan-ink/10 p-4 flex flex-wrap items-center justify-between z-20 gap-4 relative shadow-sm">
-                        <div className="flex items-center gap-4">
-                            <div className="bg-artisan-gold p-2 rounded-lg border-2 border-artisan-ink text-white shadow-ink-sm animate-[float_4s_ease-in-out_infinite]">
-                                <Icons.Chef className="w-8 h-8" />
-                            </div>
-                            <div>
-                                <h1 className="text-2xl md:text-3xl font-black text-artisan-ink font-serif tracking-wide">Deafbakery</h1>
-                                <p className="text-xs text-artisan-gray font-bold tracking-widest uppercase">Premium Artisan Team</p>
-                            </div>
-                        </div>
-
-                        <div className="flex bg-white p-1 rounded-lg border-2 border-artisan-ink/20">
-                           <button onClick={() => setViewMode('chart')} className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-bold transition-all ${viewMode === 'chart' ? 'bg-artisan-ink text-white shadow-md' : 'text-artisan-gray hover:text-artisan-ink'}`}><Icons.Layout className="w-5 h-5" /> <span className="hidden md:inline">圖表模式</span></button>
-                           <button onClick={() => setViewMode('list')} className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-bold transition-all ${viewMode === 'list' ? 'bg-artisan-ink text-white shadow-md' : 'text-artisan-gray hover:text-artisan-ink'}`}><Icons.List className="w-5 h-5" /> <span className="hidden md:inline">列表模式</span></button>
-                        </div>
-
-                        <div className="relative flex-1 max-w-xs group">
-                            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-artisan-gray group-focus-within:text-artisan-accent transition-colors"><Icons.Search className="w-5 h-5"/></div>
-                            <input type="text" placeholder="搜尋夥伴..." className="w-full pl-10 pr-4 py-2 bg-white border-2 border-artisan-ink/20 rounded-lg focus:border-artisan-ink outline-none transition-all placeholder:text-artisan-gray/50 text-artisan-ink font-bold shadow-sm" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-                        </div>
-
-                        <div className="flex items-center gap-3">
-                            {viewMode === 'chart' && (
-                                <div className="flex bg-white rounded-lg border-2 border-artisan-ink/20 p-1 hidden md:flex">
-                                    <button onClick={() => handleZoom(-0.1)} className="p-2 hover:text-artisan-accent text-artisan-gray transition-colors"><Icons.ZoomOut className="w-5 h-5" /></button>
-                                    <span className="text-sm text-artisan-ink w-12 flex items-center justify-center font-bold border-x-2 border-artisan-ink/10">{Math.round(scale * 100)}%</span>
-                                    <button onClick={() => handleZoom(0.1)} className="p-2 hover:text-artisan-accent text-artisan-gray transition-colors"><Icons.ZoomIn className="w-5 h-5" /></button>
-                                </div>
-                            )}
-                            <button onClick={handleEditClick} className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-bold transition-all border-2 shadow-ink-sm hover:shadow-ink hover:-translate-y-0.5 ${isEditing ? 'bg-white border-artisan-accent text-artisan-accent' : 'bg-artisan-ink border-artisan-ink text-white'}`}>
-                                {isEditing ? <Icons.X className="w-5 h-5"/> : <Icons.Edit className="w-5 h-5"/>}
-                                <span className="hidden md:inline">{isEditing ? '關閉' : '編輯'}</span>
-                            </button>
                         </div>
                     </div>
-
-                    <div className="flex flex-1 overflow-hidden relative z-10">
-                        {/* Editor */}
-                        <div className={`absolute top-0 left-0 h-full bg-artisan-cream/95 backdrop-blur-xl shadow-ink z-40 transition-transform duration-300 flex flex-col w-full md:w-1/3 max-w-lg border-r-4 border-artisan-ink/10 ${isEditing ? 'translate-x-0' : '-translate-x-full'}`}>
-                            <div className="p-5 border-b-4 border-artisan-ink/10 bg-artisan-bg flex justify-between items-center">
-                                <h2 className="font-bold flex items-center gap-2 text-artisan-ink text-xl"><Icons.Edit className="w-6 h-6 text-artisan-accent" /> 資料維護中心</h2>
-                                <button onClick={() => setIsEditing(false)} className="p-2 hover:bg-artisan-ink/10 rounded text-artisan-gray hover:text-artisan-ink"><Icons.X className="w-6 h-6"/></button>
-                            </div>
-                            <div className="flex-1 p-6 overflow-auto flex flex-col gap-4">
-                                <div className="bg-artisan-yellow/50 p-4 rounded border-2 border-artisan-gold text-sm text-artisan-ink font-medium leading-relaxed shadow-sm">
-                                    👉 系統準備就緒。<br/>👉 請貼上 Excel 資料 (Tab分隔)。<br/>👉 智慧防呆解析已啟用。
-                                </div>
-                                <textarea className="flex-1 w-full p-4 border-2 border-artisan-ink/20 rounded-lg bg-white text-artisan-ink font-mono text-sm leading-relaxed focus:border-artisan-ink focus:shadow-ink-sm outline-none resize-none whitespace-pre shadow-inner" value={csvData} onChange={(e) => setCsvData(e.target.value)} spellCheck="false" />
-                            </div>
-                            <div className="p-6 border-t-4 border-artisan-ink/10 bg-artisan-bg">
-                                <button onClick={() => setIsEditing(false)} className="w-full bg-artisan-gold text-white py-4 rounded-lg font-bold hover:bg-artisan-ink shadow-ink hover:shadow-ink-hover flex justify-center items-center gap-2 transition-all hover:-translate-y-1"><Icons.Save className="w-5 h-5"/> 確認更新</button>
-                            </div>
-                        </div>
-
-                        {/* Content */}
-                        <div className="flex-1 overflow-auto relative bg-transparent" ref={containerRef}>
-                            {viewMode === 'list' ? (
-                                <div className="max-w-3xl mx-auto p-4 md:p-10 min-h-full">
-                                    <div className="bg-white/80 backdrop-blur-sm rounded-xl border-2 border-artisan-ink/10 p-6 shadow-xl">
-                                        <div className="pb-4 border-b-2 border-artisan-ink/10 text-sm font-bold text-artisan-gray mb-4 flex justify-between tracking-widest uppercase"><span>Personnel List</span><span>Online</span></div>
-                                        {treeData ? <ListView node={treeData} searchTerm={searchTerm} /> : <div className="p-12 text-center text-artisan-gray font-bold animate-pulse">無資料信號...</div>}
-                                    </div>
-                                </div>
-                            ) : (
-                                <div 
-                                    className="min-w-full min-h-full relative cursor-move"
-                                    onMouseDown={(e) => {
-                                        const ele = containerRef.current;
-                                        if (!ele) return;
-                                        ele.style.cursor = 'grabbing';
-                                        ele.style.userSelect = 'none';
-                                        const startX = e.pageX - ele.offsetLeft;
-                                        const startY = e.pageY - ele.offsetTop;
-                                        const scrollLeft = ele.scrollLeft;
-                                        const scrollTop = ele.scrollTop;
-                                        const mouseMoveHandler = (e) => {
-                                            const x = e.pageX - ele.offsetLeft;
-                                            const y = e.pageY - ele.offsetTop;
-                                            ele.scrollLeft = scrollLeft - (x - startX) * 1.5;
-                                            ele.scrollTop = scrollTop - (y - startY) * 1.5;
-                                        };
-                                        const mouseUpHandler = () => {
-                                            ele.style.cursor = 'move';
-                                            ele.style.removeProperty('user-select');
-                                            document.removeEventListener('mousemove', mouseMoveHandler);
-                                            document.removeEventListener('mouseup', mouseUpHandler);
-                                        };
-                                        document.addEventListener('mousemove', mouseMoveHandler);
-                                        document.addEventListener('mouseup', mouseUpHandler);
-                                    }}
-                                >
-                                    <div className="min-w-max min-h-max p-10 md:p-20 flex justify-center origin-top transition-transform duration-300 ease-out" style={{ transform: `scale(${scale})` }}>
-                                        {treeData ? <OrgNode node={treeData} level={0} searchTerm={searchTerm} /> : <div className="text-center text-artisan-gold mt-20 font-bold text-xl animate-pulse">正在繪製溫暖家園...</div>}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
+                </ErrorBoundary>
             );
         };
 
