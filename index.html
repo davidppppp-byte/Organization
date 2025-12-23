@@ -137,6 +137,12 @@
             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
           </React.Fragment>
         ),
+        RotateCcw: (
+          <React.Fragment>
+            <polyline points="1 4 1 10 7 10"/>
+            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+          </React.Fragment>
+        ),
         ZoomIn: (
           <React.Fragment>
             <circle cx="11" cy="11" r="8"/>
@@ -566,6 +572,15 @@
         setEmployees(newData);
         localStorage.setItem('deafbakery_org_data', JSON.stringify(newData));
         setEditingId(null);
+        alert("已暫存於本機。若要讓所有人看到變更，請務必點擊上方的「複製程式碼」並更新檔案！");
+      };
+
+      const handleReset = () => {
+        if (window.confirm('確定要清除暫存並還原成檔案原始資料嗎？\n這會遺失您尚未「複製程式碼」的所有修改。')) {
+          localStorage.removeItem('deafbakery_org_data');
+          setEmployees(INITIAL_DATA);
+          alert('已還原成檔案預設資料。');
+        }
       };
 
       const handleAdd = () => {
@@ -583,7 +598,7 @@
         // 這邊我們輸出的是給這個 HTML 版本用的資料
         const codeString = `const INITIAL_DATA = ${jsonString};`;
         navigator.clipboard.writeText(codeString);
-        alert("程式碼已複製！請編輯此 HTML 檔案，找到 'const INITIAL_DATA = ...' 的部分並貼上取代，然後存檔即可永久更新。");
+        alert("程式碼已複製！\n\n接下來請：\n1. 打開此 index.html 檔案進行編輯\n2. 找到 'const INITIAL_DATA = ...' 的部分\n3. 貼上並取代舊的程式碼\n4. 存檔並上傳至 GitHub\n\n這樣所有人才能看到您的修改喔！");
       };
 
       const handleZoomIn = () => setZoom(prev => Math.min(prev + 0.1, 2));
@@ -747,9 +762,12 @@
                         <h2 className="text-2xl font-bold text-stone-800 flex items-center gap-2">
                           <Icon name="Edit" size={24} className="text-orange-500" /> 資料編輯模式
                         </h2>
-                        <p className="text-stone-500 text-sm mt-1">在此處修改後，資料會暫存於瀏覽器。若要永久更新，請按複製程式碼，並貼回此 HTML 檔案中取代舊資料。</p>
+                        <p className="text-stone-500 text-sm mt-1">⚠️ 注意：修改後的資料僅暫存於此電腦。若要更新給所有人看，請務必點擊「複製程式碼」並更新 GitHub 檔案。</p>
                       </div>
                       <div className="flex gap-2">
+                        <button onClick={handleReset} className="flex items-center gap-2 bg-red-100 hover:bg-red-200 text-red-600 px-4 py-2 rounded-lg transition-colors shadow-sm">
+                          <Icon name="RotateCcw" size={18} /> 清除暫存
+                        </button>
                         <button onClick={handleAdd} className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors shadow-sm">
                           <Icon name="Plus" size={18} /> 新增人員
                         </button>
