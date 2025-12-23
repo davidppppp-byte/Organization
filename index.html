@@ -38,7 +38,7 @@
       font-size: 14px;
       line-height: 1.5;
     }
-    /* 隱藏捲軸但保留功能 (可選) */
+    /* 隱藏捲軸但保留功能 */
     .scrollbar-hide::-webkit-scrollbar {
         display: none;
     }
@@ -46,6 +46,9 @@
         -ms-overflow-style: none;
         scrollbar-width: none;
     }
+    /* 拖曳時的游標樣式 */
+    .cursor-grab { cursor: grab; }
+    .cursor-grabbing { cursor: grabbing; }
   </style>
 </head>
 <body class="bg-orange-50 text-stone-800 font-sans overflow-hidden">
@@ -403,7 +406,7 @@
               {isGrid ? (
                 /* 矩陣 (Grid) 佈局 - 用於大量成員 */
                 <div className="w-full pt-4 border-t-2 border-stone-300 flex justify-center">
-                   <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 w-full max-w-[90vw]">
+                   <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 w-full">
                       {node.children.map(child => (
                         /* 在矩陣中，我們直接顯示卡片，不需要複雜的樹狀線條 */
                         <div key={child.id} className="flex justify-center">
@@ -702,7 +705,7 @@
 
                     <div 
                       ref={scrollContainerRef}
-                      className="h-full w-full overflow-auto bg-stone-50 cursor-grab active:cursor-grabbing p-10 scrollbar-hide"
+                      className={`h-full w-full overflow-auto bg-stone-50 p-10 scrollbar-hide ${isDragging ? 'cursor-grabbing' : 'cursor-grab'}`}
                       onMouseDown={onMouseDown}
                       onMouseLeave={onMouseLeave}
                       onMouseUp={onMouseUp}
