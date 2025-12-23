@@ -2,49 +2,94 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>蒙恩聽障烘焙坊 - 組織架構圖</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Deafbakery - 組織架構圖</title>
     
-    <!-- 1. 載入 Tailwind CSS (樣式) -->
+    <!-- 1. 載入 Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- 2. 載入 React 核心 -->
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     
-    <!-- 3. 載入 Babel (讓瀏覽器看不懂的 React 程式碼變成懂的) -->
+    <!-- 3. 載入 Babel -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-    <!-- 自定義樣式 -->
+    <!-- 4. 設定 Tailwind 擴充樣式 (高級插畫風) -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        artisan: {
+                            bg: '#F9F7F2',        // 紙張米白
+                            ink: '#2C2321',       // 墨色深棕 (文字/邊框)
+                            gold: '#C69C6D',      // 烘焙金
+                            cream: '#FFFDF5',     // 奶油白 (卡片背景)
+                            accent: '#E65100',    // 活力橘 (強調)
+                            gray: '#8D8987',      // 質感灰
+                            
+                            // 部門色系 (低飽和莫蘭迪色)
+                            red: '#F2D7D5',
+                            blue: '#D6EAF8',
+                            green: '#D5F5E3',
+                            purple: '#EBDEF0',
+                            yellow: '#FCF3CF',
+                        }
+                    },
+                    boxShadow: {
+                        'ink': '4px 4px 0px 0px #2C2321', // 實心手繪陰影
+                        'ink-sm': '2px 2px 0px 0px #2C2321',
+                        'ink-hover': '6px 6px 0px 0px #2C2321',
+                    },
+                    fontFamily: {
+                        serif: ['"Noto Serif TC"', 'serif'],
+                        sans: ['"Noto Sans TC"', 'sans-serif'],
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-5px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        body { font-family: "Microsoft JhengHei", "Heiti TC", sans-serif; }
-        .animate-fadeIn { animation: fadeIn 0.3s ease-in-out; }
-        .animate-shake { animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both; }
-        @keyframes fadeIn {
-            0% { opacity: 0; transform: translateY(-10px); }
-            100% { opacity: 1; transform: translateY(0); }
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;900&display=swap');
+
+        body { 
+            font-family: 'Noto Sans TC', sans-serif; 
+            background-color: #F9F7F2;
+            color: #2C2321;
+            /* 紙張紋理效果 */
+            background-image: radial-gradient(#C69C6D 0.5px, transparent 0.5px), radial-gradient(#C69C6D 0.5px, #F9F7F2 0.5px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+            background-blend-mode: multiply;
+            opacity: 0.98;
         }
-        @keyframes shake {
-            10%, 90% { transform: translate3d(-1px, 0, 0); }
-            20%, 80% { transform: translate3d(2px, 0, 0); }
-            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-            40%, 60% { transform: translate3d(4px, 0, 0); }
-        }
-        /* 隱藏捲軸但可捲動 */
-        .custom-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #f5f5f4; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #d6d3d1; border-radius: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #a8a29e; }
+
+        /* 自定義捲軸 */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #C69C6D; border-radius: 4px; border: 2px solid #F9F7F2; }
+        ::-webkit-scrollbar-thumb:hover { background: #2C2321; }
     </style>
 </head>
-<body class="bg-stone-50 text-stone-800 h-screen overflow-hidden selection:bg-amber-200">
+<body>
 
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
+        const { useState, useEffect, useRef, useMemo } = React;
 
-        // --- 1. 圖示組件 (直接內建，不依賴外部) ---
+        // --- 1. Icons (精緻線條風格) ---
         const Icon = ({ path, className }) => (
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
                 {path}
@@ -55,7 +100,7 @@
             Search: (props) => <Icon {...props} path={<><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></>} />,
             ZoomIn: (props) => <Icon {...props} path={<><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/><line x1="11" x2="11" y1="8" y2="14"/><line x1="8" x2="14" y1="11" y2="11"/></>} />,
             ZoomOut: (props) => <Icon {...props} path={<><circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/><line x1="8" x2="14" y1="11" y2="11"/></>} />,
-            Edit: (props) => <Icon {...props} path={<><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></>} />,
+            Edit: (props) => <Icon {...props} path={<><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></>} />,
             Save: (props) => <Icon {...props} path={<><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></>} />,
             X: (props) => <Icon {...props} path={<><path d="M18 6 6 18"/><path d="m6 6 12 12"/></>} />,
             User: (props) => <Icon {...props} path={<><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></>} />,
@@ -65,101 +110,102 @@
             List: (props) => <Icon {...props} path={<><line x1="8" x2="21" y1="6" y2="6"/><line x1="8" x2="21" y1="12" y2="12"/><line x1="8" x2="21" y1="18" y2="18"/><line x1="3" x2="3.01" y1="6" y2="6"/><line x1="3" x2="3.01" y1="12" y2="12"/><line x1="3" x2="3.01" y1="18" y2="18"/></>} />,
             Layout: (props) => <Icon {...props} path={<><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><line x1="3" x2="21" y1="9" y2="9"/><line x1="9" x2="9" y1="9" y2="21"/></>} />,
             Lock: (props) => <Icon {...props} path={<><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></>} />,
-            KeyRound: (props) => <Icon {...props} path={<><path d="M2 18v3c0 .6.4 1 1 1h4v-3h3v-3h2l1.4-1.4a6.5 6.5 0 1 0-4-4Z"/><circle cx="16.5" cy="7.5" r=".5"/></>} />
+            KeyRound: (props) => <Icon {...props} path={<><path d="M2 18v3c0 .6.4 1 1 1h4v-3h3v-3h2l1.4-1.4a6.5 6.5 0 1 0-4-4Z"/><circle cx="16.5" cy="7.5" r=".5"/></>} />,
+            Chef: (props) => <Icon {...props} path={<><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 9.08 0A5.11 5.11 0 0 1 18.59 6 4 4 0 0 1 20 13.87V21H6Z"/><line x1="6" y1="17" x2="20" y2="17"/></>} />
         };
 
-        // --- 2. 核心資料 (2024/12/22 最終修正版 - 使用逗號分隔以避免格式跑掉) ---
-        const INITIAL_CSV = `ID,Name,TechTitle,MgmtTitle,ParentID
-CEO,潘信宏,,執行長,
-COO,潘重恩,,營運長,CEO
-C_PROD,生產中心,,中心,COO
-C_LOGI,物流中心,,中心,COO
-C_OPS,營運中心,,中心,COO
-C_MGM,管理中心,,中心,COO
-D_PROD,生產部,,部門,羅月惠
-D_PKG,包裝部,,部門,C_PROD
-D_SHIP,出貨部,,部門,C_LOGI
-D_LOGI,物流部,,部門,C_LOGI
-D_MKT,行銷部,,部門,C_OPS
-D_SALES,銷售部,,部門,C_OPS
-D_CS,客服部,,部門,C_OPS
-D_BD,商務拓展部,,部門,C_OPS
-D_ADMIN,管理部,,部門,C_MGM
-D_RD,研發部,,部門,C_PROD
-G_PM,專案管理組,,組別,邱夢涵
-G_ART,美編組,,組別,邱夢涵
-G_SNS,社群組,,組別,邱夢涵
-G_PLAN,企劃組,,組別,邱夢涵
-G_HR,人力資源組,,組別,D_ADMIN
-G_GA,總務行政組,,組別,D_ADMIN
-G_FIN,財務組,,組別,D_ADMIN
-G_IT,資訊管理組,,組別,D_ADMIN
-G_FILL,餡料組,,組別,D_PROD
-G_CUT,切割組,,組別,D_PROD
-G_BAKE,烘烤組,,組別,D_PROD
-羅月惠,羅月惠,,總監,C_PROD
-吳夢婷,吳夢婷,,經理,D_BD
-陳巧珊,陳巧珊,業務專員,,吳夢婷
-邱宗仁,邱宗仁,物流專員,襄理,D_LOGI
-謝呈弦,謝呈弦,物流專員,,邱宗仁
-李建興,李建興,物流專員,,邱宗仁
-賴韋仲,賴韋仲,理貨專員,襄理,D_SHIP
-莊于揮,莊于揮,理貨專員,,賴韋仲
-羅虹旻,羅虹旻,理貨專員,組長,賴韋仲
-王惠琦,王惠琦,理貨專員,組長,賴韋仲
-賴瑞池,賴瑞池,理貨專員,,賴韋仲
-張熒倫,張熒倫,理貨員,,賴韋仲
-林淑琪,林淑琪,理貨專員,,賴韋仲
-陳玟婕,陳玟婕,理貨專員,,賴韋仲
-藍卿碧,藍卿碧,理貨員,,賴韋仲
-陳川倪,陳川倪,理貨員,,賴韋仲
-羅冠琳,羅冠琳,理貨員,,賴韋仲
-謝秀卿,謝秀卿,理貨員,,賴韋仲
-張沛嫺,張沛嫺,理貨員,,賴韋仲
-陳美余,陳美余,理貨員,,賴韋仲
-林美晴,林美晴,理貨員,,賴韋仲
-徐珮庭,徐珮庭,銷售專員,儲備幹部,D_SALES
-許雅惠,許雅惠,銷售人員,,徐珮庭
-潘名貞,潘名貞,銷售人員,,徐珮庭
-蕭羽婷,蕭羽婷,銷售人員,,徐珮庭
-黃惠玲,黃惠玲,包裝專員,襄理,D_PKG
-譚文琦,譚文琦,包裝專員,襄理,D_PKG
-盧怡安,盧怡安,包裝專員,,黃惠玲
-王若蓁,王若蓁,包裝專員,線長,黃惠玲
-賴羽珊,賴羽珊,包裝專員,,黃惠玲
-李美玲,李美玲,包裝員,,黃惠玲
-蔡雅姍,蔡雅姍,包裝員,,黃惠玲
-游雅雯,游雅雯,包裝員,,黃惠玲
-何如雁,何如雁,包裝員,,黃惠玲
-賴宜貞,賴宜貞,包裝員,,黃惠玲
-李涔瑜,李涔瑜,包裝員,,黃惠玲
-沈傳仁,沈傳仁,包裝員,,黃惠玲
-林妍綸,林妍綸,包裝員,,黃惠玲
-劉星岑,劉星岑,包裝員,,黃惠玲
-利偉銨,利偉銨,研發主廚,,D_RD
-卓佳蓉,卓佳蓉,技術專員,現場主管,D_PROD
-李怡珊,李怡珊,資深技術專員,,利偉銨
-蔡孟庭,蔡孟庭,技術專員,現場主管,D_PROD
-曹柏凱,曹柏凱,技術專員,領班,卓佳蓉
-洪孝誼,洪孝誼,技術專員,領班,卓佳蓉
-劉羿君,劉羿君,技術專員,領班,卓佳蓉
-陳浚宏,陳浚宏,技術專員,領班,卓佳蓉
-鄭靜宜,鄭靜宜,技術專員,領班,卓佳蓉
-鍾騄震,鍾騄震,技術專員,領班,卓佳蓉
-汪建佑,汪建佑,技術專員,,卓佳蓉
-柯泳安,柯泳安,技術專員,,卓佳蓉
-葉文琳,葉文琳,作業員,,卓佳蓉
-黃佳祺,黃佳祺,作業員,食安管理人員,卓佳蓉
-劉汴萱,劉汴萱,作業員,,卓佳蓉
-吳柔漪,吳柔漪,作業員,,卓佳蓉
-陳韻嵐,陳韻嵐,作業員,,卓佳蓉
-李昕庭,李昕庭,作業員,,卓佳蓉
-董俊佑,董俊佑,作業員,,卓佳蓉
-汪建達,汪建達,作業員,,卓佳蓉
-蔡詠翔,蔡詠翔,作業員,,卓佳蓉
-葉柏志,葉柏志,作業員,,卓佳蓉
-黃威智,黃威智,作業員,,卓佳蓉
-林華萱,林華萱,作業員,,卓佳蓉
+        // --- 2. 初始資料 ---
+        const INITIAL_CSV = `ID	大名	技術職稱	管理職稱	Parent ID
+CEO	潘信宏		執行長	
+COO	潘重恩		營運長	CEO
+C_PROD	生產中心		中心	COO
+C_LOGI	物流中心		中心	COO
+C_OPS	營運中心		中心	COO
+C_MGM	管理中心		中心	COO
+D_PROD	生產部		部門	羅月惠
+D_PKG	包裝部		部門	C_PROD
+D_SHIP	出貨部		部門	C_LOGI
+D_LOGI	物流部		部門	C_LOGI
+D_MKT	行銷部		部門	C_OPS
+D_SALES	銷售部		部門	C_OPS
+D_CS	客服部		部門	C_OPS
+D_BD	商務拓展部		部門	C_OPS
+D_ADMIN	管理部		部門	C_MGM
+D_RD	研發部		部門	C_PROD
+G_PM	專案管理組		組別	邱夢涵
+G_ART	美編組		組別	邱夢涵
+G_SNS	社群組		組別	邱夢涵
+G_PLAN	企劃組		組別	邱夢涵
+G_HR	人力資源組		組別	D_ADMIN
+G_GA	總務行政組		組別	D_ADMIN
+G_FIN	財務組		組別	D_ADMIN
+G_IT	資訊管理組		組別	D_ADMIN
+G_FILL	餡料組		組別	D_PROD
+G_CUT	切割組		組別	D_PROD
+G_BAKE	烘烤組		組別	D_PROD
+羅月惠	羅月惠		總監	C_PROD
+吳夢婷	吳夢婷		經理	D_BD
+陳巧珊	陳巧珊	業務專員		吳夢婷
+邱宗仁	邱宗仁	物流專員	襄理	D_LOGI
+謝呈弦	謝呈弦	物流專員		邱宗仁
+李建興	李建興	物流專員		邱宗仁
+賴韋仲	賴韋仲	理貨專員	襄理	D_SHIP
+莊于揮	莊于揮	理貨專員		賴韋仲
+羅虹旻	羅虹旻	理貨專員	組長	賴韋仲
+王惠琦	王惠琦	理貨專員	組長	賴韋仲
+賴瑞池	賴瑞池	理貨專員		賴韋仲
+張熒倫	張熒倫	理貨員		賴韋仲
+林淑琪	林淑琪	理貨專員		賴韋仲
+陳玟婕	陳玟婕	理貨專員		賴韋仲
+藍卿碧	藍卿碧	理貨員		賴韋仲
+陳川倪	陳川倪	理貨員		賴韋仲
+羅冠琳	羅冠琳	理貨員		賴韋仲
+謝秀卿	謝秀卿	理貨員		賴韋仲
+張沛嫺	張沛嫺	理貨員		賴韋仲
+陳美余	陳美余	理貨員		賴韋仲
+林美晴	林美晴	理貨員		賴韋仲
+徐珮庭	徐珮庭	銷售專員	儲備幹部	D_SALES
+許雅惠	許雅惠	銷售人員		徐珮庭
+潘名貞	潘名貞	銷售人員		徐珮庭
+蕭羽婷	蕭羽婷	銷售人員		徐珮庭
+黃惠玲	黃惠玲	包裝專員	襄理	D_PKG
+譚文琦	譚文琦	包裝專員	襄理	D_PKG
+盧怡安	盧怡安	包裝專員		黃惠玲
+王若蓁	王若蓁	包裝專員	線長	黃惠玲
+賴羽珊	賴羽珊	包裝專員		黃惠玲
+李美玲	李美玲	包裝員		黃惠玲
+蔡雅姍	蔡雅姍	包裝員		黃惠玲
+游雅雯	游雅雯	包裝員		黃惠玲
+何如雁	何如雁	包裝員		黃惠玲
+賴宜貞	賴宜貞	包裝員		黃惠玲
+李涔瑜	李涔瑜	包裝員		黃惠玲
+沈傳仁	沈傳仁	包裝員		黃惠玲
+林妍綸	林妍綸	包裝員		黃惠玲
+劉星岑	劉星岑	包裝員		黃惠玲
+利偉銨	利偉銨	研發主廚		D_RD
+卓佳蓉	卓佳蓉	技術專員	現場主管	D_PROD
+李怡珊	李怡珊	資深技術專員		利偉銨
+蔡孟庭	蔡孟庭	技術專員	現場主管	D_PROD
+曹柏凱	曹柏凱	技術專員	領班	卓佳蓉
+洪孝誼	洪孝誼	技術專員	領班	卓佳蓉
+劉羿君	劉羿君	技術專員	領班	卓佳蓉
+陳浚宏	陳浚宏	技術專員	領班	卓佳蓉
+鄭靜宜	鄭靜宜	技術專員	領班	卓佳蓉
+鍾騄震	鍾騄震	技術專員	領班	卓佳蓉
+汪建佑	汪建佑	技術專員		卓佳蓉
+柯泳安	柯泳安	技術專員		卓佳蓉
+葉文琳	葉文琳	作業員		卓佳蓉
+黃佳祺	黃佳祺	作業員	食安管理人員	卓佳蓉
+劉汴萱	劉汴萱	作業員		卓佳蓉
+吳柔漪	吳柔漪	作業員		卓佳蓉
+陳韻嵐	陳韻嵐	作業員		卓佳蓉
+李昕庭	李昕庭	作業員		卓佳蓉
+董俊佑	董俊佑	作業員		卓佳蓉
+汪建達	汪建達	作業員		卓佳蓉
+蔡詠翔	蔡詠翔	作業員		卓佳蓉
+葉柏志	葉柏志	作業員		卓佳蓉
+黃威智	黃威智	作業員		卓佳蓉
+林華萱	林華萱	作業員		卓佳蓉
 蕭靖嬙,蕭靖嬙,美編專員,組長,G_ART
 邱夢涵,邱夢涵,資深專案執行,經理,D_MKT
 蘇羿瑄,蘇羿瑄,社群專員,組長,G_SNS
@@ -185,25 +231,38 @@ G_BAKE,烘烤組,,組別,D_PROD
 邱慧姍,邱慧姍,客服專員,,王佑珊
 游昭琪,游昭琪,客服專員,,王佑珊`;
 
-        // --- 3. 邏輯層 (React Components) ---
+        // --- 3. 高級插畫風格邏輯 ---
 
-        // 配色邏輯
         const getLevelStyle = (level, mgmtTitle) => {
             const title = mgmtTitle || ''; 
-            if (title.includes('中心')) return 'bg-amber-900 text-stone-50 border-amber-900 shadow-md'; 
-            if (title.includes('部門')) return 'bg-stone-600 text-stone-50 border-stone-600 shadow-md';
-            if (title.includes('組別')) return 'bg-stone-500 text-stone-50 border-stone-500 shadow-sm';
+            const baseClass = "relative overflow-hidden transition-all duration-300 border-2 border-artisan-ink shadow-ink bg-artisan-cream";
             
-            if (title.includes('執行長') || title.includes('董事長')) return 'bg-stone-900 text-amber-50 border-stone-900 shadow-xl scale-110 ring-4 ring-stone-100';
-            if (title.includes('營運長') || title.includes('總經理')) return 'bg-stone-800 text-stone-100 border-stone-800 shadow-lg';
-            if (title.includes('總監')) return 'bg-stone-800 text-stone-100 border-stone-700 shadow-lg';
-            if (title.includes('經理') || title.includes('襄理') || title.includes('主任')) return 'bg-stone-700 text-stone-50 border-stone-700 shadow-lg';
-            if (title.includes('組長') || title.includes('幹部') || title.includes('領班') || title.includes('主管') || title.includes('線長')) return 'bg-stone-500 text-white border-stone-500 shadow-md';
+            // 執行長 - 金色系
+            if (title.includes('執行長') || title.includes('董事長')) {
+                return `${baseClass} bg-artisan-yellow/50 hover:bg-artisan-yellow hover:shadow-ink-hover hover:-translate-y-1`;
+            }
+            // 營運長/總監 - 橘色系
+            if (title.includes('營運長') || title.includes('總經理') || title.includes('總監')) {
+                return `${baseClass} bg-artisan-red/50 hover:bg-artisan-red hover:shadow-ink-hover hover:-translate-y-1`;
+            }
+            // 中心 - 藍色系
+            if (title.includes('中心')) {
+                return `${baseClass} bg-artisan-blue/50 hover:bg-artisan-blue hover:shadow-ink-hover hover:-translate-y-1`;
+            }
+            // 部門 - 綠色系
+            if (title.includes('部門') || title.includes('經理') || title.includes('襄理') || title.includes('主任')) {
+                return `${baseClass} bg-artisan-green/50 hover:bg-artisan-green hover:shadow-ink-hover hover:-translate-y-1`;
+            }
+            // 組別 - 紫色系
+            if (title.includes('組別') || title.includes('組長') || title.includes('幹部') || title.includes('領班') || title.includes('線長')) {
+                return `${baseClass} bg-artisan-purple/50 hover:bg-artisan-purple hover:shadow-ink-hover hover:-translate-y-1`;
+            }
 
-            return 'bg-white text-stone-700 border-stone-200 hover:border-amber-400 hover:shadow-lg'; 
+            // 一般 - 簡約白
+            return `${baseClass} hover:bg-white hover:shadow-ink-hover hover:-translate-y-1`; 
         };
 
-        // 列表模式元件
+        // --- List View Component ---
         const ListView = ({ node, level = 0, searchTerm }) => {
             const [expanded, setExpanded] = useState(true);
             const hasChildren = node.children && node.children.length > 0;
@@ -218,45 +277,48 @@ G_BAKE,烘烤組,,組別,D_PROD
                 if (isMatch) setExpanded(true);
             }, [isMatch]);
 
-            const indent = level * 16;
-            const hasMgmtTitle = node.mgmtTitle && node.mgmtTitle.trim() !== '';
-
-            let rowBg = 'hover:bg-stone-50';
-            if (node.mgmtTitle?.includes('中心')) rowBg = 'bg-amber-50/50';
-            if (node.mgmtTitle?.includes('部門')) rowBg = 'bg-stone-50';
-
             if (searchTerm && !isMatch && !expanded) return null;
 
+            const indent = level * 20;
+            const hasMgmtTitle = node.mgmtTitle && node.mgmtTitle.trim() !== '';
+
+            // 列表樣式
+            let rowClass = "border-l-4 border-artisan-ink/20 hover:bg-artisan-gold/10";
+            let textClass = "text-artisan-ink font-medium";
+            
+            if (level === 0) { rowClass = "border-l-4 border-artisan-gold bg-artisan-gold/20"; textClass = "font-bold text-lg"; }
+            else if (level === 1) { rowClass = "border-l-4 border-artisan-ink bg-artisan-ink/5"; textClass = "font-bold"; }
+            
             return (
-                <div className="w-full">
+                <div className="w-full font-sans mb-1">
                     <div 
-                        className={`flex items-center p-3 border-b border-stone-100 cursor-pointer transition-colors ${rowBg} ${isMatch ? 'bg-yellow-100' : ''}`}
-                        style={{ paddingLeft: `${Math.max(12, indent)}px` }}
+                        className={`flex items-center p-3 cursor-pointer transition-all rounded-r-lg ${rowClass} ${isMatch ? 'bg-artisan-yellow border-artisan-accent' : ''}`}
+                        style={{ marginLeft: `${indent}px`, width: `calc(100% - ${indent}px)` }}
                         onClick={() => setExpanded(!expanded)}
                     >
-                        <div className="mr-2 text-stone-400 w-4">
-                            {hasChildren ? (expanded ? '▼' : '▶') : '•'}
+                        <div className="mr-3 w-6 flex justify-center text-artisan-ink">
+                            {hasChildren ? (expanded ? '▼' : '▶') : <div className="w-2 h-2 bg-artisan-gray rounded-full"></div>}
                         </div>
                         
-                        <div className="flex-1">
-                            <div className="flex items-baseline gap-2">
-                                <span className={`font-bold ${level < 2 ? 'text-lg text-stone-900' : 'text-stone-800'}`}>
-                                    {node.name}
+                        <div className="flex-1 flex flex-wrap items-center gap-3">
+                            <span className={`${textClass}`}>
+                                {node.name}
+                            </span>
+                            {hasMgmtTitle && (
+                                <span className="text-xs px-2 py-0.5 border-2 border-artisan-ink rounded-full bg-white font-bold tracking-wide shadow-sm">
+                                    {node.mgmtTitle}
                                 </span>
-                                {hasMgmtTitle && (
-                                    <span className="text-sm px-2 py-0.5 rounded bg-stone-800 text-white font-bold">
-                                        {node.mgmtTitle}
-                                    </span>
-                                )}
-                            </div>
+                            )}
                             {node.techTitle && (
-                                <div className="text-xs text-stone-500 mt-0.5">{node.techTitle}</div>
+                                <span className="text-sm text-artisan-gray italic">
+                                    {node.techTitle}
+                                </span>
                             )}
                         </div>
                     </div>
                     
                     {hasChildren && expanded && (
-                        <div className="animate-fadeIn">
+                        <div className="animate-[fadeIn_0.3s_ease-out]">
                             {node.children.map(child => (
                                 <ListView key={child.id} node={child} level={level + 1} searchTerm={searchTerm} />
                             ))}
@@ -266,13 +328,20 @@ G_BAKE,烘烤組,,組別,D_PROD
             );
         };
 
-        // 緊湊型節點群組
+        // --- Chart View Components ---
         const CompactNodeGroup = ({ nodes, level, searchTerm }) => {
             return (
-                <div className="flex flex-col items-center pt-4">
-                    <div className="w-px h-4 bg-stone-300 -mt-4 mb-2"></div>
+                <div className="flex flex-col items-center pt-6 relative">
+                    {/* 手繪連接線 */}
+                    <div className="w-0.5 h-6 bg-artisan-ink -mt-6 mb-4"></div>
                     
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 bg-stone-100/50 p-3 rounded-xl border border-stone-200/60 shadow-inner">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 bg-white/80 border-2 border-artisan-ink p-4 rounded-lg shadow-ink relative">
+                        {/* 裝飾釘子 */}
+                        <div className="absolute top-2 left-2 w-2 h-2 rounded-full bg-artisan-ink/20"></div>
+                        <div className="absolute top-2 right-2 w-2 h-2 rounded-full bg-artisan-ink/20"></div>
+                        <div className="absolute bottom-2 left-2 w-2 h-2 rounded-full bg-artisan-ink/20"></div>
+                        <div className="absolute bottom-2 right-2 w-2 h-2 rounded-full bg-artisan-ink/20"></div>
+
                         {nodes.map(node => {
                             const hasMgmtTitle = node.mgmtTitle && node.mgmtTitle.trim() !== '';
                             const isMatch = searchTerm && (
@@ -285,15 +354,15 @@ G_BAKE,烘烤組,,組別,D_PROD
                                 <div 
                                     key={node.id}
                                     className={`
-                                        flex flex-col p-2 bg-white rounded border border-stone-200 shadow-sm w-36 hover:shadow-md transition-all
-                                        ${isMatch ? 'ring-2 ring-amber-400' : ''}
+                                        flex flex-col p-3 bg-white rounded border-2 border-artisan-ink/20 w-40 hover:border-artisan-gold hover:shadow-md transition-all
+                                        ${isMatch ? 'ring-2 ring-artisan-accent bg-artisan-yellow' : ''}
                                     `}
                                 >
                                     <div className="flex items-center justify-between mb-1">
-                                        <span className="font-bold text-stone-800 text-sm truncate">{node.name}</span>
-                                        {hasMgmtTitle && <span className="text-[11px] font-bold bg-stone-700 text-white px-1.5 py-0.5 rounded shadow-sm">{node.mgmtTitle}</span>}
+                                        <span className="font-bold text-artisan-ink text-sm truncate">{node.name}</span>
+                                        {hasMgmtTitle && <span className="text-[10px] bg-artisan-ink text-white px-1.5 py-0.5 rounded-sm">{node.mgmtTitle}</span>}
                                     </div>
-                                    {node.techTitle && <span className="text-[10px] text-stone-500 truncate">{node.techTitle}</span>}
+                                    {node.techTitle && <span className="text-[11px] text-artisan-gray truncate font-medium">{node.techTitle}</span>}
                                 </div>
                             );
                         })}
@@ -302,7 +371,6 @@ G_BAKE,烘烤組,,組別,D_PROD
             );
         };
 
-        // 標準圖表節點
         const OrgNode = ({ node, level, searchTerm }) => {
             const [expanded, setExpanded] = useState(true);
             const isMatch = searchTerm && (
@@ -321,9 +389,8 @@ G_BAKE,烘烤組,,組別,D_PROD
             const isLeafGroup = hasChildren && level > 1 && node.children.length > 2 && node.children.every(child => !child.children || child.children.length === 0);
 
             const getIcon = () => {
-                const iconClass = "w-3 h-3 mr-1.5 opacity-70";
+                const iconClass = "w-5 h-5 mr-2 opacity-80";
                 if (!hasMgmtTitle) return null;
-                
                 if (node.mgmtTitle.includes('長') || node.mgmtTitle.includes('監')) return <Icons.User className={iconClass} />;
                 if (node.mgmtTitle.includes('中心')) return <Icons.Building className={iconClass} />;
                 if (node.mgmtTitle.includes('部')) return <Icons.Layers className={iconClass} />;
@@ -332,38 +399,37 @@ G_BAKE,烘烤組,,組別,D_PROD
             }
 
             return (
-                <div className="flex flex-col items-center">
+                <div className="flex flex-col items-center relative z-10">
                     <div 
                         className={`
-                            relative flex flex-col items-center px-4 py-3 m-2 rounded-lg border transition-all duration-500 cursor-pointer font-serif tracking-wide
+                            px-6 py-4 m-4 w-60 min-h-[6rem] justify-center cursor-pointer rounded-lg
                             ${getLevelStyle(level, node.mgmtTitle)}
-                            ${isMatch ? 'ring-2 ring-amber-400 scale-105 z-10 shadow-amber-200/50' : ''}
-                            ${!expanded && hasChildren ? 'opacity-90' : ''}
-                            w-52 min-h-[5rem] justify-center z-10
+                            ${isMatch ? 'ring-4 ring-artisan-accent scale-105' : ''}
+                            ${!expanded && hasChildren ? 'opacity-80 grayscale' : ''}
                         `}
                         onClick={() => setExpanded(!expanded)}
                     >
                         {hasMgmtTitle && (
-                            <div className="flex items-center text-lg font-bold uppercase tracking-wider opacity-100 mb-1.5 border-b border-white/20 pb-1.5 w-full justify-center shadow-sm">
+                            <div className="flex items-center text-lg font-black tracking-wider mb-2 border-b-2 border-dashed border-artisan-ink/20 pb-2 w-full justify-center text-artisan-ink">
                                 {getIcon()}
                                 {node.mgmtTitle}
                             </div>
                         )}
 
-                        <div className={`text-base font-medium text-center leading-tight font-sans ${hasMgmtTitle ? '' : 'mt-1'}`}>
+                        <div className={`text-lg font-bold text-center leading-tight tracking-wide text-artisan-ink ${hasMgmtTitle ? '' : 'mt-1'} ${level===0 ? 'text-2xl font-serif' : ''}`}>
                             {node.name}
                         </div>
 
                         {node.techTitle && (
-                            <div className={`text-xs mt-1.5 font-sans tracking-tight px-2 py-0.5 rounded
-                                ${hasMgmtTitle ? 'text-stone-200 bg-white/10' : 'text-stone-500 bg-stone-100'}
+                            <div className={`text-sm mt-2 font-medium px-2 py-0.5 rounded text-center truncate text-artisan-gray
+                                ${hasMgmtTitle ? 'bg-white/50' : ''}
                             `}>
                                 {node.techTitle}
                             </div>
                         )}
                         
                         {hasChildren && (
-                            <div className="absolute -bottom-3 bg-stone-50 rounded-full w-6 h-6 flex items-center justify-center text-xs border border-stone-300 text-stone-600 hover:bg-amber-100 hover:text-amber-800 hover:border-amber-300 transition-colors z-10 shadow-sm">
+                            <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 bg-white rounded-full w-8 h-8 flex items-center justify-center text-sm border-2 border-artisan-ink text-artisan-ink hover:bg-artisan-gold hover:text-white transition-colors z-20 shadow-sm cursor-pointer font-bold">
                                 {expanded ? '−' : '+'}
                             </div>
                         )}
@@ -374,15 +440,15 @@ G_BAKE,烘烤組,,組別,D_PROD
                             {isLeafGroup ? (
                                 <CompactNodeGroup nodes={node.children} level={level + 1} searchTerm={searchTerm} />
                             ) : (
-                                <div className="flex flex-col items-center animate-fadeIn">
-                                    <div className="w-px h-6 bg-stone-300"></div>
-                                    <div className="flex relative">
+                                <div className="flex flex-col items-center animate-[fadeIn_0.5s_ease-out] relative mt-4">
+                                    <div className="w-0.5 h-8 bg-artisan-ink -mt-4"></div>
+                                    <div className="flex relative pt-6">
                                         {node.children.length > 1 && (
-                                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[calc(100%-13rem)] h-px bg-stone-300 -translate-y-px"></div>
+                                            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[calc(100%-16rem)] h-0.5 bg-artisan-ink mt-0"></div>
                                         )}
                                         {node.children.map((child, index) => (
-                                            <div key={child.id} className="flex flex-col items-center px-3 relative">
-                                                <div className="w-px h-6 bg-stone-300 absolute top-0 left-1/2 -translate-x-1/2 -translate-y-6"></div>
+                                            <div key={child.id} className="flex flex-col items-center px-4 relative">
+                                                <div className="w-0.5 h-6 bg-artisan-ink absolute top-0 left-1/2 -translate-x-1/2 -mt-6"></div>
                                                 <OrgNode node={child} level={level + 1} searchTerm={searchTerm} />
                                             </div>
                                         ))}
@@ -395,7 +461,7 @@ G_BAKE,烘烤組,,組別,D_PROD
             );
         };
 
-        // 主應用程式
+        // --- Main App ---
         const App = () => {
             const [csvData, setCsvData] = useState(INITIAL_CSV);
             const [treeData, setTreeData] = useState(null);
@@ -409,41 +475,63 @@ G_BAKE,烘烤組,,組別,D_PROD
             const containerRef = useRef(null);
             const passwordInputRef = useRef(null);
 
+            useEffect(() => {
+                if (window.innerWidth < 768) {
+                    setViewMode('list');
+                }
+            }, []);
+
             const parseCSV = (csvText) => {
                 try {
                     const lines = csvText.trim().split('\n');
                     const items = [];
                     let headers = [];
+                    let hasExplicitHeader = false;
 
-                    lines.forEach((line) => {
+                    lines.forEach((line, index) => {
                         if (!line.trim()) return;
+                        
                         const delimiter = line.includes('\t') ? '\t' : ',';
-                        const parts = line.split(delimiter).map(p => p.trim());
+                        let parts = line.split(delimiter).map(p => p.trim());
                         
-                        const hasID = parts.some(p => p.toLowerCase() === 'id');
-                        const hasName = parts.some(p => p.includes('Name') || p.includes('大名') || p.includes('姓名'));
+                        const isHeaderRow = parts.some(p => p.toLowerCase() === 'id') && 
+                                          parts.some(p => p.includes('Name') || p.includes('大名') || p.includes('姓名'));
                         
-                        if (items.length === 0 && hasID && hasName) {
-                            headers = parts.map(h => h.toLowerCase().replace(/\s/g, ''));
-                            return;
+                        if (items.length === 0 && isHeaderRow) {
+                           headers = parts.map(h => h.toLowerCase().replace(/\s/g, ''));
+                           hasExplicitHeader = true;
+                           return;
                         }
-                        if (headers.length === 0) return;
+                        
+                        if (items.length === 0 && !hasExplicitHeader && !isHeaderRow) {
+                            headers = ['id', 'name', 'techtitle', 'mgmttitle', 'parentid'];
+                        }
+
                         if (parts.length < 2) return;
 
                         const item = {};
+                        
                         const idIdx = headers.findIndex(h => h === 'id');
                         const nameIdx = headers.findIndex(h => h.includes('name') || h.includes('名'));
                         const techIdx = headers.findIndex(h => h.includes('tech') || h.includes('技術') || h === '職稱');
                         const mgmtIdx = headers.findIndex(h => h.includes('mgmt') || h.includes('管理')); 
                         const parentIdx = headers.findIndex(h => h.includes('parent') || h.includes('主管'));
 
-                        if (idIdx !== -1) item.id = parts[idIdx];
-                        if (nameIdx !== -1) item.name = parts[nameIdx];
-                        item.mgmtTitle = mgmtIdx !== -1 ? parts[mgmtIdx] : '';
-                        item.techTitle = techIdx !== -1 ? parts[techIdx] : '';
-                        item.parentId = parentIdx !== -1 ? parts[parentIdx] : null;
+                        if (idIdx !== -1 && parts[idIdx]) item.id = parts[idIdx];
+                        if (nameIdx !== -1 && parts[nameIdx]) item.name = parts[nameIdx];
+                        
+                        item.mgmtTitle = (mgmtIdx !== -1 && parts[mgmtIdx]) ? parts[mgmtIdx] : '';
+                        item.techTitle = (techIdx !== -1 && parts[techIdx]) ? parts[techIdx] : '';
+                        
+                        if (parentIdx !== -1 && parts[parentIdx]) {
+                            item.parentId = parts[parentIdx];
+                        } else if (parts.length >= 5) {
+                            const lastVal = parts[parts.length-1];
+                            if (lastVal && lastVal !== item.techTitle && lastVal !== item.mgmtTitle) {
+                                // optional
+                            }
+                        }
 
-                        // 智慧補全
                         if (!item.mgmtTitle) {
                             if (item.id && item.id.startsWith('C_')) item.mgmtTitle = '中心';
                             if (item.id && item.id.startsWith('D_')) item.mgmtTitle = '部門';
@@ -464,10 +552,17 @@ G_BAKE,烘烤組,,組別,D_PROD
                             potentialRoots.push(el);
                             return;
                         }
+                        
+                        if (el.parentId === el.id || el.parentId === el.name) {
+                            potentialRoots.push(el);
+                            return;
+                        }
+
                         let parentEl = items[idMapping[el.parentId]];
+                        
                         if (!parentEl) {
-                            const parentByName = items.find(i => i.name === el.parentId);
-                            if (parentByName) parentEl = parentByName;
+                           const parentByName = items.find(i => i.name === el.parentId);
+                           if (parentByName) parentEl = parentByName;
                         }
 
                         if (parentEl) {
@@ -511,8 +606,8 @@ G_BAKE,烘烤組,,組別,D_PROD
                     setAuthError(true);
                     const input = passwordInputRef.current;
                     if (input) {
-                        input.classList.add('animate-shake');
-                        setTimeout(() => input.classList.remove('animate-shake'), 500);
+                        input.classList.add('animate-[shake_0.5s_ease-in-out]');
+                        setTimeout(() => input.classList.remove('animate-[shake_0.5s_ease-in-out]'), 500);
                     }
                 }
             };
@@ -522,138 +617,107 @@ G_BAKE,烘烤組,,組別,D_PROD
             };
 
             return (
-                <div className="flex flex-col h-screen bg-stone-50 font-sans text-stone-800 overflow-hidden selection:bg-amber-200 relative">
+                <div className="flex flex-col h-screen overflow-hidden relative font-sans text-artisan-ink">
+                    
                     {/* Auth Modal */}
                     {showAuthModal && (
-                        <div className="absolute inset-0 z-50 flex items-center justify-center bg-stone-900/50 backdrop-blur-sm animate-fadeIn">
-                            <div className="bg-white p-6 rounded-xl shadow-2xl w-full max-w-sm border border-stone-200">
-                                <div className="flex justify-between items-center mb-4">
-                                    <h3 className="text-lg font-bold text-stone-800 flex items-center gap-2">
-                                        <Icons.Lock className="w-5 h-5 text-amber-600" />
-                                        管理者驗證
+                        <div className="absolute inset-0 z-50 flex items-center justify-center bg-artisan-ink/50 backdrop-blur-sm animate-[fadeIn_0.3s_ease-out]">
+                            <div className="bg-artisan-bg border-4 border-artisan-ink p-8 rounded-lg shadow-ink w-full max-w-sm relative">
+                                <div className="flex justify-between items-center mb-6">
+                                    <h3 className="text-xl font-bold text-artisan-ink flex items-center gap-2 font-serif">
+                                        <Icons.Lock className="w-6 h-6 text-artisan-accent" /> 管理員驗證
                                     </h3>
-                                    <button onClick={() => {setShowAuthModal(false); setAuthError(false); setPasswordInput('');}} className="text-stone-400 hover:text-stone-600">
-                                        <Icons.X className="w-5 h-5" />
-                                    </button>
+                                    <button onClick={() => {setShowAuthModal(false); setAuthError(false); setPasswordInput('');}} className="text-artisan-gray hover:text-artisan-ink"><Icons.X className="w-6 h-6" /></button>
                                 </div>
-                                <form onSubmit={verifyPassword} className="space-y-4">
+                                <form onSubmit={verifyPassword} className="space-y-6">
                                     <div>
-                                        <label className="block text-xs font-medium text-stone-500 mb-1">請輸入編輯密碼</label>
-                                        <div className="relative">
-                                            <div className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400 flex items-center justify-center"><Icons.KeyRound className="w-4 h-4"/></div>
+                                        <label className="block text-sm font-bold text-artisan-ink mb-2">請輸入通行碼</label>
+                                        <div className="relative group">
+                                            <div className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-artisan-gray"><Icons.KeyRound className="w-5 h-5"/></div>
                                             <input 
                                                 ref={passwordInputRef}
                                                 type="password" 
                                                 value={passwordInput}
                                                 onChange={(e) => setPasswordInput(e.target.value)}
-                                                className={`w-full pl-9 pr-4 py-2 bg-stone-50 border rounded-lg outline-none focus:ring-2 transition-all
-                                                    ${authError ? 'border-red-300 focus:ring-red-200 bg-red-50' : 'border-stone-200 focus:ring-amber-500/20 focus:border-amber-500'}
-                                                `}
-                                                placeholder="輸入密碼..."
+                                                className={`w-full pl-10 pr-4 py-3 bg-white border-2 rounded outline-none transition-all font-bold tracking-widest text-lg ${authError ? 'border-red-500' : 'border-artisan-ink focus:border-artisan-accent'}`}
+                                                placeholder="••••••••"
                                             />
                                         </div>
-                                        {authError && <p className="text-red-500 text-xs mt-1 ml-1">密碼錯誤，請重試。</p>}
+                                        {authError && <p className="text-red-500 text-xs mt-2 font-bold">>> 密碼錯誤，請重試</p>}
                                     </div>
-                                    <button 
-                                        type="submit"
-                                        className="w-full bg-stone-800 text-white py-2 rounded-lg font-medium hover:bg-stone-900 transition-colors shadow-lg"
-                                    >
-                                        確認進入
-                                    </button>
+                                    <button type="submit" className="w-full bg-artisan-ink text-white py-3 rounded font-bold hover:bg-artisan-accent transition-all shadow-ink-sm hover:shadow-ink hover:-translate-y-0.5">確認進入</button>
                                 </form>
                             </div>
                         </div>
                     )}
 
-                    <div className="bg-white/80 backdrop-blur-md border-b border-stone-200 shadow-sm p-4 flex flex-wrap items-center justify-between z-20 gap-4">
-                        <div className="flex items-center gap-3">
-                            <div className="bg-stone-900 p-2 rounded text-amber-50 font-serif font-bold tracking-widest shadow-lg">蒙恩</div>
-                            <h1 className="text-xl font-bold text-stone-800 hidden sm:block font-serif tracking-wide">組織架構圖</h1>
+                    {/* Toolbar */}
+                    <div className="bg-artisan-bg/95 border-b-4 border-artisan-ink/10 p-4 flex flex-wrap items-center justify-between z-20 gap-4 relative shadow-sm">
+                        <div className="flex items-center gap-4">
+                            <div className="bg-artisan-gold p-2 rounded-lg border-2 border-artisan-ink text-white shadow-ink-sm animate-[float_4s_ease-in-out_infinite]">
+                                <Icons.Chef className="w-8 h-8" />
+                            </div>
+                            <div>
+                                <h1 className="text-2xl md:text-3xl font-black text-artisan-ink font-serif tracking-wide">Deafbakery</h1>
+                                <p className="text-xs text-artisan-gray font-bold tracking-widest uppercase">Premium Artisan Team</p>
+                            </div>
                         </div>
 
-                        <div className="flex bg-stone-100 p-1 rounded-lg border border-stone-200">
-                            <button 
-                                onClick={() => setViewMode('chart')}
-                                className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${viewMode === 'chart' ? 'bg-white text-amber-700 shadow-sm' : 'text-stone-500 hover:text-stone-700'}`}
-                            >
-                                <Icons.Layout className="w-4 h-4" /> <span className="hidden sm:inline">圖表模式</span>
-                            </button>
-                            <button 
-                                onClick={() => setViewMode('list')}
-                                className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${viewMode === 'list' ? 'bg-white text-amber-700 shadow-sm' : 'text-stone-500 hover:text-stone-700'}`}
-                            >
-                                <Icons.List className="w-4 h-4" /> <span className="hidden sm:inline">列表模式</span>
-                            </button>
+                        <div className="flex bg-white p-1 rounded-lg border-2 border-artisan-ink/20">
+                           <button onClick={() => setViewMode('chart')} className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-bold transition-all ${viewMode === 'chart' ? 'bg-artisan-ink text-white shadow-md' : 'text-artisan-gray hover:text-artisan-ink'}`}><Icons.Layout className="w-5 h-5" /> <span className="hidden md:inline">圖表模式</span></button>
+                           <button onClick={() => setViewMode('list')} className={`flex items-center gap-2 px-4 py-2 rounded-md text-sm font-bold transition-all ${viewMode === 'list' ? 'bg-artisan-ink text-white shadow-md' : 'text-artisan-gray hover:text-artisan-ink'}`}><Icons.List className="w-5 h-5" /> <span className="hidden md:inline">列表模式</span></button>
                         </div>
 
                         <div className="relative flex-1 max-w-xs group">
-                            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400 w-4 h-4 flex items-center justify-center"><Icons.Search className="w-4 h-4"/></div>
-                            <input 
-                                type="text" 
-                                placeholder="搜尋..." 
-                                className="w-full pl-9 pr-4 py-2 bg-stone-100 border border-transparent rounded-full focus:bg-white focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none transition-all placeholder:text-stone-400 text-stone-700 text-sm"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                            />
+                            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-artisan-gray group-focus-within:text-artisan-accent transition-colors"><Icons.Search className="w-5 h-5"/></div>
+                            <input type="text" placeholder="搜尋夥伴..." className="w-full pl-10 pr-4 py-2 bg-white border-2 border-artisan-ink/20 rounded-lg focus:border-artisan-ink outline-none transition-all placeholder:text-artisan-gray/50 text-artisan-ink font-bold shadow-sm" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                         </div>
 
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-3">
                             {viewMode === 'chart' && (
-                                <div className="flex bg-stone-100 rounded-full p-1 border border-stone-200 hidden sm:flex">
-                                    <button onClick={() => handleZoom(-0.1)} className="p-2 hover:bg-white hover:shadow rounded-full text-stone-600" title="縮小"><Icons.ZoomOut className="w-4 h-4" /></button>
-                                    <span className="text-xs text-stone-500 w-10 flex items-center justify-center font-medium">{Math.round(scale * 100)}%</span>
-                                    <button onClick={() => handleZoom(0.1)} className="p-2 hover:bg-white hover:shadow rounded-full text-stone-600" title="放大"><Icons.ZoomIn className="w-4 h-4" /></button>
+                                <div className="flex bg-white rounded-lg border-2 border-artisan-ink/20 p-1 hidden md:flex">
+                                    <button onClick={() => handleZoom(-0.1)} className="p-2 hover:text-artisan-accent text-artisan-gray transition-colors"><Icons.ZoomOut className="w-5 h-5" /></button>
+                                    <span className="text-sm text-artisan-ink w-12 flex items-center justify-center font-bold border-x-2 border-artisan-ink/10">{Math.round(scale * 100)}%</span>
+                                    <button onClick={() => handleZoom(0.1)} className="p-2 hover:text-artisan-accent text-artisan-gray transition-colors"><Icons.ZoomIn className="w-5 h-5" /></button>
                                 </div>
                             )}
-                            
-                            <div className="h-6 w-px bg-stone-300 mx-2 hidden sm:block"></div>
-
-                            <button 
-                                onClick={handleEditClick} 
-                                className={`flex items-center gap-2 px-4 py-2 rounded-full font-medium transition-all shadow-sm ${isEditing ? 'bg-stone-800 text-stone-50' : 'bg-amber-700 text-white hover:bg-amber-800 hover:shadow-md'}`}
-                            >
-                                {isEditing ? <Icons.X className="w-4 h-4"/> : <Icons.Edit className="w-4 h-4"/>}
-                                <span className="hidden sm:inline text-sm">{isEditing ? '關閉' : '編輯'}</span>
+                            <button onClick={handleEditClick} className={`flex items-center gap-2 px-5 py-2.5 rounded-lg font-bold transition-all border-2 shadow-ink-sm hover:shadow-ink hover:-translate-y-0.5 ${isEditing ? 'bg-white border-artisan-accent text-artisan-accent' : 'bg-artisan-ink border-artisan-ink text-white'}`}>
+                                {isEditing ? <Icons.X className="w-5 h-5"/> : <Icons.Edit className="w-5 h-5"/>}
+                                <span className="hidden md:inline">{isEditing ? '關閉' : '編輯'}</span>
                             </button>
                         </div>
                     </div>
 
-                    <div className="flex flex-1 overflow-hidden relative">
-                        <div className={`absolute top-0 left-0 h-full bg-white/95 backdrop-blur shadow-2xl z-40 transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) flex flex-col w-full md:w-1/3 max-w-lg border-r border-stone-200 ${isEditing ? 'translate-x-0' : '-translate-x-full'}`}>
-                            <div className="p-5 border-b border-stone-100 bg-stone-50 flex justify-between items-center">
-                                <h2 className="font-bold flex items-center gap-2 text-stone-800 font-serif"><Icons.Edit className="w-4 h-4 text-amber-600" /> 資料維護中心</h2>
-                                <button onClick={() => setIsEditing(false)} className="p-2 hover:bg-stone-200 rounded-full text-stone-500"><Icons.X className="w-5 h-5"/></button>
+                    <div className="flex flex-1 overflow-hidden relative z-10">
+                        {/* Editor */}
+                        <div className={`absolute top-0 left-0 h-full bg-artisan-cream/95 backdrop-blur-xl shadow-ink z-40 transition-transform duration-300 flex flex-col w-full md:w-1/3 max-w-lg border-r-4 border-artisan-ink/10 ${isEditing ? 'translate-x-0' : '-translate-x-full'}`}>
+                            <div className="p-5 border-b-4 border-artisan-ink/10 bg-artisan-bg flex justify-between items-center">
+                                <h2 className="font-bold flex items-center gap-2 text-artisan-ink text-xl"><Icons.Edit className="w-6 h-6 text-artisan-accent" /> 資料維護中心</h2>
+                                <button onClick={() => setIsEditing(false)} className="p-2 hover:bg-artisan-ink/10 rounded text-artisan-gray hover:text-artisan-ink"><Icons.X className="w-6 h-6"/></button>
                             </div>
-                            <div className="flex-1 p-5 bg-stone-50/50 flex flex-col gap-3">
-                                <div className="bg-amber-50 p-4 rounded-lg text-sm text-amber-900 border border-amber-100/50 shadow-sm">
-                                    貼上您的 Excel 資料即可更新。
+                            <div className="flex-1 p-6 overflow-auto flex flex-col gap-4">
+                                <div className="bg-artisan-yellow/50 p-4 rounded border-2 border-artisan-gold text-sm text-artisan-ink font-medium leading-relaxed shadow-sm">
+                                    👉 系統準備就緒。<br/>👉 請貼上 Excel 資料 (Tab分隔)。<br/>👉 智慧防呆解析已啟用。
                                 </div>
-                                <textarea 
-                                    className="flex-1 w-full p-4 border border-stone-300 rounded-lg font-mono text-xs leading-relaxed focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none resize-none shadow-inner bg-white text-stone-600 whitespace-pre"
-                                    value={csvData}
-                                    onChange={(e) => setCsvData(e.target.value)}
-                                />
+                                <textarea className="flex-1 w-full p-4 border-2 border-artisan-ink/20 rounded-lg bg-white text-artisan-ink font-mono text-sm leading-relaxed focus:border-artisan-ink focus:shadow-ink-sm outline-none resize-none whitespace-pre shadow-inner" value={csvData} onChange={(e) => setCsvData(e.target.value)} spellCheck="false" />
                             </div>
-                            <div className="p-5 border-t border-stone-100 bg-white">
-                                <button onClick={() => setIsEditing(false)} className="w-full bg-stone-800 text-stone-50 py-3 rounded-lg font-bold hover:bg-stone-900 shadow-lg flex justify-center items-center gap-2">
-                                    <Icons.Save className="w-4 h-4"/> 更新畫面
-                                </button>
+                            <div className="p-6 border-t-4 border-artisan-ink/10 bg-artisan-bg">
+                                <button onClick={() => setIsEditing(false)} className="w-full bg-artisan-gold text-white py-4 rounded-lg font-bold hover:bg-artisan-ink shadow-ink hover:shadow-ink-hover flex justify-center items-center gap-2 transition-all hover:-translate-y-1"><Icons.Save className="w-5 h-5"/> 確認更新</button>
                             </div>
                         </div>
 
-                        <div className="flex-1 overflow-auto bg-stone-50 relative custom-scrollbar">
+                        {/* Content */}
+                        <div className="flex-1 overflow-auto relative bg-transparent" ref={containerRef}>
                             {viewMode === 'list' ? (
-                                <div className="max-w-3xl mx-auto p-4 sm:p-8 min-h-full bg-white shadow-sm my-4 rounded-xl border border-stone-100">
-                                    {treeData ? (
-                                        <ListView node={treeData} searchTerm={searchTerm} />
-                                    ) : (
-                                        <div className="p-10 text-center text-stone-400">無資料</div>
-                                    )}
+                                <div className="max-w-3xl mx-auto p-4 md:p-10 min-h-full">
+                                    <div className="bg-white/80 backdrop-blur-sm rounded-xl border-2 border-artisan-ink/10 p-6 shadow-xl">
+                                        <div className="pb-4 border-b-2 border-artisan-ink/10 text-sm font-bold text-artisan-gray mb-4 flex justify-between tracking-widest uppercase"><span>Personnel List</span><span>Online</span></div>
+                                        {treeData ? <ListView node={treeData} searchTerm={searchTerm} /> : <div className="p-12 text-center text-artisan-gray font-bold animate-pulse">無資料信號...</div>}
+                                    </div>
                                 </div>
                             ) : (
                                 <div 
-                                    className="min-w-full min-h-full overflow-auto relative cursor-move"
-                                    ref={containerRef}
+                                    className="min-w-full min-h-full relative cursor-move"
                                     onMouseDown={(e) => {
                                         const ele = containerRef.current;
                                         if (!ele) return;
@@ -666,10 +730,8 @@ G_BAKE,烘烤組,,組別,D_PROD
                                         const mouseMoveHandler = (e) => {
                                             const x = e.pageX - ele.offsetLeft;
                                             const y = e.pageY - ele.offsetTop;
-                                            const walkX = (x - startX) * 1.5; 
-                                            const walkY = (y - startY) * 1.5;
-                                            ele.scrollLeft = scrollLeft - walkX;
-                                            ele.scrollTop = scrollTop - walkY;
+                                            ele.scrollLeft = scrollLeft - (x - startX) * 1.5;
+                                            ele.scrollTop = scrollTop - (y - startY) * 1.5;
                                         };
                                         const mouseUpHandler = () => {
                                             ele.style.cursor = 'move';
@@ -681,16 +743,8 @@ G_BAKE,烘烤組,,組別,D_PROD
                                         document.addEventListener('mouseup', mouseUpHandler);
                                     }}
                                 >
-                                    <div className="absolute inset-0 pointer-events-none opacity-[0.03]" style={{ backgroundImage: 'radial-gradient(#444 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
-                                    <div 
-                                        className="min-w-max min-h-max p-10 sm:p-20 flex justify-center origin-top transition-transform duration-300 ease-out"
-                                        style={{ transform: `scale(${scale})` }}
-                                    >
-                                        {treeData ? (
-                                            <OrgNode node={treeData} level={0} searchTerm={searchTerm} />
-                                        ) : (
-                                            <div className="text-center text-stone-400 mt-20">資料載入中...</div>
-                                        )}
+                                    <div className="min-w-max min-h-max p-10 md:p-20 flex justify-center origin-top transition-transform duration-300 ease-out" style={{ transform: `scale(${scale})` }}>
+                                        {treeData ? <OrgNode node={treeData} level={0} searchTerm={searchTerm} /> : <div className="text-center text-artisan-gold mt-20 font-bold text-xl animate-pulse">正在繪製溫暖家園...</div>}
                                     </div>
                                 </div>
                             )}
