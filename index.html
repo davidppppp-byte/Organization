@@ -62,7 +62,6 @@
     const { useState, useMemo, useEffect } = React;
 
     // --- 圖示組件 (SVG) ---
-    // 使用 React.Fragment 替代 <> 以確保最高相容性，並移除可能的隱藏字元
     const Icon = ({ name, size = 24, className = "" }) => {
       const icons = {
         Users: (
@@ -334,14 +333,16 @@
     };
 
     // --- 元件：遞迴樹節點 (桌面版/手機圖表版 - 可點擊縮放) ---
-    const TreeNode = ({ node }) => {
+    const TreeNode = ({ node, hideTopConnector = false }) => {
       const [expanded, setExpanded] = useState(true);
       
       const isOrgUnit = node.id.startsWith('C_') || node.id.startsWith('D_') || node.id.startsWith('G_');
       const hasChildren = node.children.length > 0;
+      // 門檻：成員數大於 8 則切換為矩陣 (Grid) 顯示
+      const isGrid = hasChildren && node.children.length > 8;
       
       return (
-        <div className="flex flex-col items-center mx-2">
+        <div className={`flex flex-col items-center mx-2 ${isGrid ? 'w-full' : ''}`}>
           {/* 節點卡片 */}
           <div 
             onClick={() => hasChildren && setExpanded(!expanded)}
@@ -353,6 +354,11 @@
                 : 'bg-white border-stone-200 w-36 min-h-[80px]'}
             `}
           >
+            {/* 上方垂直連接線 (若為隱藏模式則不顯示) */}
+            {!hideTopConnector && (
+               <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-px h-4 bg-stone-300"></div>
+            )}
+
             <div className={`font-bold text-center ${isOrgUnit ? 'text-amber-900 text-lg' : 'text-stone-800 text-base'}`}>
               {node.name}
             </div>
@@ -382,21 +388,40 @@
 
           {/* 連接線與子節點 */}
           {hasChildren && expanded && (
-            <div className="flex flex-col items-center animate-fadeIn">
+            <div className="flex flex-col items-center animate-fadeIn w-full">
+              {/* 垂直線 (連接父節點到子節點區塊) */}
               <div className="w-px h-4 bg-stone-300"></div>
               
-              <div className="flex items-start">
-                 {node.children.map((child, index) => (
-                   <div key={child.id} className="flex flex-col items-center">
-                     <div className="flex w-full">
-                        <div className={`h-px bg-stone-300 w-[50%] ${index === 0 ? 'invisible' : ''}`}></div>
-                        <div className={`h-px bg-stone-300 w-[50%] ${index === node.children.length - 1 ? 'invisible' : ''}`}></div>
-                     </div>
-                     <div className="w-px h-4 bg-stone-300"></div>
-                     <TreeNode node={child} />
+              {isGrid ? (
+                /* 矩陣 (Grid) 佈局 - 用於大量成員 */
+                <div className="w-full max-w-4xl border-t-2 border-stone-300 pt-4">
+                   <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                      {node.children.map(child => (
+                        /* 在矩陣中，我們直接顯示卡片，不需要複雜的樹狀線條 */
+                        <div key={child.id} className="flex justify-center">
+                           <TreeNode node={child} hideTopConnector={true} />
+                        </div>
+                      ))}
                    </div>
-                 ))}
-              </div>
+                </div>
+              ) : (
+                /* 標準樹狀 (Tree) 佈局 */
+                <div className="flex items-start">
+                   {node.children.map((child, index) => (
+                     <div key={child.id} className="flex flex-col items-center">
+                       {/* 頂部橫線邏輯 */}
+                       <div className="flex w-full">
+                          <div className={`h-px bg-stone-300 w-[50%] ${index === 0 ? 'invisible' : ''}`}></div>
+                          <div className={`h-px bg-stone-300 w-[50%] ${index === node.children.length - 1 ? 'invisible' : ''}`}></div>
+                       </div>
+                       {/* 這裡的垂直線已由子組件的 top connector 取代，或保留結構 */}
+                       <div className="w-px h-4 bg-stone-300"></div>
+                       {/* 傳遞 hideTopConnector=true 因為我們已經在上面畫了線 */ }
+                       <TreeNode node={child} hideTopConnector={true} />
+                     </div>
+                   ))}
+                </div>
+              )}
             </div>
           )}
           
@@ -607,7 +632,7 @@
           )}
 
           <main className="flex-1 overflow-hidden relative">
-            <div className="h-full w-full max-w-7xl mx-auto">
+            <div className="h-full w-full mx-auto">
               {!isAdmin && (
                 <React.Fragment>
                   {/* 圖表模式 */}
