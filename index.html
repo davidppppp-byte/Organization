@@ -35,6 +35,8 @@
       border-radius: 8px;
       font-family: monospace;
       white-space: pre-wrap;
+      font-size: 14px;
+      line-height: 1.5;
     }
   </style>
 </head>
@@ -50,7 +52,7 @@
     window.onerror = function(message, source, lineno, colno, error) {
       const container = document.getElementById('error-container');
       container.style.display = 'block';
-      container.innerHTML = `<strong>系統發生錯誤 (System Error):</strong>\n${message}\n\n來源: ${source}:${lineno}`;
+      container.innerHTML = '<strong>系統發生錯誤 (System Error):</strong>\n' + message + '\n\n來源: ' + source + ':' + lineno;
       console.error(error);
     };
   </script>
@@ -60,7 +62,7 @@
     const { useState, useMemo, useEffect } = React;
 
     // --- 圖示組件 (SVG) ---
-    // 使用 React.Fragment 替代 <> 以確保最高相容性
+    // 使用 React.Fragment 替代 <> 以確保最高相容性，並移除可能的隱藏字元
     const Icon = ({ name, size = 24, className = "" }) => {
       const icons = {
         Users: (
