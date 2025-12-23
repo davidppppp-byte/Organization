@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Deafbakery - 組織架構圖</title>
+    <title>Deafbakery - 數位戰情室</title>
     
     <!-- 1. 載入 Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -114,7 +114,8 @@
             Chef: (props) => <Icon {...props} path={<><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 9.08 0A5.11 5.11 0 0 1 18.59 6 4 4 0 0 1 20 13.87V21H6Z"/><line x1="6" y1="17" x2="20" y2="17"/></>} />
         };
 
-        // --- 2. 初始資料 ---
+        // --- 2. 核心資料 (2024/12/23 最新版) ---
+        // 已經轉為標準 CSV 格式，避免 Tab 跑版問題
         const INITIAL_CSV = `ID,Name,TechTitle,MgmtTitle,ParentID
 CEO,潘信宏,,執行長,
 COO,潘重恩,,營運長,CEO
@@ -182,14 +183,14 @@ G_BAKE,烘烤組,,組別,D_PROD
 沈傳仁,沈傳仁,包裝員,,黃惠玲
 林妍綸,林妍綸,包裝員,,黃惠玲
 劉星岑,劉星岑,包裝員,,黃惠玲
-利偉銨,利偉銨,研發主廚,,D_RD
+利偉銨,利偉銨,資深研發專員,研發主廚,D_RD
 卓佳蓉,卓佳蓉,技術專員,組長,羅月惠
 李怡珊,李怡珊,資深技術專員,,利偉銨
 蔡孟庭,蔡孟庭,技術專員,組長,羅月惠
 曹柏凱,曹柏凱,技術專員,組長,羅月惠
 洪孝誼,洪孝誼,技術專員,組長,羅月惠
 劉羿君,劉羿君,技術專員,組長,羅月惠
-陳浚宏,陳浚宏,技術專員,組長,羅月惠
+陳浚宏,陳浚宏,技術專員,廠務,羅月惠
 鄭靜宜,鄭靜宜,技術專員,組長,羅月惠
 鍾騄震,鍾騄震,技術專員,組長,羅月惠
 汪建佑,汪建佑,技術專員,,卓佳蓉
@@ -216,7 +217,7 @@ G_BAKE,烘烤組,,組別,D_PROD
 許可榆,許可榆,社群小編,,蘇羿瑄
 陳楷曜,陳楷曜,社群小編,,蘇羿瑄
 曹櫻樺,曹櫻樺,專案執行專員,,G_PM
-徐苑妮,徐苑妮,會計專員,,G_FIN
+徐苑妮,徐苑妮,會計人員,,G_FIN
 廖詩旻,廖詩旻,資深專員,,G_HR
 何芸芳,何芸芳,專員,,G_HR
 陳俊吉,陳俊吉,專員,,G_GA
@@ -239,7 +240,7 @@ G_BAKE,烘烤組,,組別,D_PROD
             const title = mgmtTitle || ''; 
             const baseClass = "relative overflow-hidden transition-all duration-300 border-2 border-artisan-ink shadow-ink bg-artisan-cream";
             
-            // 執行長 - 金色系
+            // 執行長/高層 - 金色系
             if (title.includes('執行長') || title.includes('董事長') || title.includes('資訊長')) {
                 return `${baseClass} bg-artisan-yellow/50 hover:bg-artisan-yellow hover:shadow-ink-hover hover:-translate-y-1`;
             }
@@ -483,6 +484,7 @@ G_BAKE,烘烤組,,組別,D_PROD
                 }
             }, []);
 
+            // Robust Parser with Auto-Alignment for Tab-Separated Values
             const parseCSV = (csvText) => {
                 try {
                     const lines = csvText.trim().split('\n');
@@ -494,8 +496,10 @@ G_BAKE,烘烤組,,組別,D_PROD
                         if (!line.trim()) return;
                         
                         const delimiter = line.includes('\t') ? '\t' : ',';
+                        // Keep empty strings for alignment by not filtering immediately
                         let parts = line.split(delimiter).map(p => p.trim());
                         
+                        // Header detection logic
                         const isHeaderRow = parts.some(p => p.toLowerCase() === 'id') && 
                                           parts.some(p => p.includes('Name') || p.includes('大名') || p.includes('姓名'));
                         
@@ -505,6 +509,7 @@ G_BAKE,烘烤組,,組別,D_PROD
                            return;
                         }
                         
+                        // Default header assumption for 5 columns (matches Excel structure)
                         if (items.length === 0 && !hasExplicitHeader && !isHeaderRow) {
                             headers = ['id', 'name', 'techtitle', 'mgmttitle', 'parentid'];
                         }
@@ -517,7 +522,7 @@ G_BAKE,烘烤組,,組別,D_PROD
                         const nameIdx = headers.findIndex(h => h.includes('name') || h.includes('名'));
                         const techIdx = headers.findIndex(h => h.includes('tech') || h.includes('技術') || h === '職稱');
                         const mgmtIdx = headers.findIndex(h => h.includes('mgmt') || h.includes('管理')); 
-                        const parentIdx = headers.findIndex(h => h.includes('parent') || h.includes('主管'));
+                        const parentIdx = headers.findIndex(h => h.includes('parent') || h.includes('主管') || h.includes('Parent'));
 
                         if (idIdx !== -1 && parts[idIdx]) item.id = parts[idIdx];
                         if (nameIdx !== -1 && parts[nameIdx]) item.name = parts[nameIdx];
@@ -525,15 +530,20 @@ G_BAKE,烘烤組,,組別,D_PROD
                         item.mgmtTitle = (mgmtIdx !== -1 && parts[mgmtIdx]) ? parts[mgmtIdx] : '';
                         item.techTitle = (techIdx !== -1 && parts[techIdx]) ? parts[techIdx] : '';
                         
+                        // Smart ParentID Detection
+                        // If header is detected, rely on index.
+                        // If not, and we have 5 columns, assume last column is ParentID
                         if (parentIdx !== -1 && parts[parentIdx]) {
                             item.parentId = parts[parentIdx];
                         } else if (parts.length >= 5) {
+                            // Only assign if it looks like an ID or Name, not empty
                             const lastVal = parts[parts.length-1];
-                            if (lastVal && lastVal !== item.techTitle && lastVal !== item.mgmtTitle) {
-                                // optional
+                            if (lastVal) {
+                                item.parentId = lastVal; 
                             }
                         }
 
+                        // Auto-fill titles for organization nodes if missing
                         if (!item.mgmtTitle) {
                             if (item.id && item.id.startsWith('C_')) item.mgmtTitle = '中心';
                             if (item.id && item.id.startsWith('D_')) item.mgmtTitle = '部門';
@@ -555,6 +565,7 @@ G_BAKE,烘烤組,,組別,D_PROD
                             return;
                         }
                         
+                        // Prevent self-loop
                         if (el.parentId === el.id || el.parentId === el.name) {
                             potentialRoots.push(el);
                             return;
@@ -562,6 +573,7 @@ G_BAKE,烘烤組,,組別,D_PROD
 
                         let parentEl = items[idMapping[el.parentId]];
                         
+                        // Fallback: Find by name
                         if (!parentEl) {
                            const parentByName = items.find(i => i.name === el.parentId);
                            if (parentByName) parentEl = parentByName;
