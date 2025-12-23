@@ -1,5 +1,5 @@
-// 注意：請務必將此檔案儲存為 UTF-8 編碼，否則中文會變亂碼。
-// Note: Please ensure this file is saved with UTF-8 encoding.
+// 注意：請務必使用 UTF-8 編碼儲存此檔案。
+// 建議直接在 GitHub 網頁介面上編輯貼上，以避免 Windows 記事本造成的編碼問題。
 
 import React, { useState, useMemo, useEffect } from 'react';
 import { 
@@ -294,9 +294,23 @@ export default function App() {
   const [editForm, setEditForm] = useState({});
 
   useEffect(() => {
+    // 嘗試從 localStorage 讀取
     const saved = localStorage.getItem('deafbakery_org_data');
     if (saved) {
-      setEmployees(JSON.parse(saved));
+      try {
+        const parsed = JSON.parse(saved);
+        // 簡單檢查編碼是否正確 (如果名稱變亂碼，通常會出現特殊符號)
+        // 這裡做個簡單判斷，如果資料壞了就回退到 INITIAL_DATA
+        if (Array.isArray(parsed) && parsed.length > 0 && parsed[0].name && !parsed[0].name.includes('')) {
+          setEmployees(parsed);
+        } else {
+          console.warn("Detected corrupted data in localStorage, reverting to initial data.");
+          setEmployees(INITIAL_DATA);
+        }
+      } catch (e) {
+        console.error("Failed to parse saved data", e);
+        setEmployees(INITIAL_DATA);
+      }
     } else {
       setEmployees(INITIAL_DATA);
     }
@@ -349,7 +363,7 @@ export default function App() {
     const jsonString = JSON.stringify(employees, null, 2);
     const codeString = `const INITIAL_DATA = ${jsonString};`;
     navigator.clipboard.writeText(codeString);
-    alert("程式碼已複製！請將其貼上到 GitHub 程式碼中的 INITIAL_DATA 區塊以永久保存變更。");
+    alert("程式碼已複製！請將其貼上到 GitHub 程式碼中的 INITIAL_DATA 區塊以永久保存變更。\n請注意：貼上時請確認編碼為 UTF-8。");
   };
 
   // Zoom controls
