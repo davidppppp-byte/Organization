@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Deafbakery 組織圖 (雲端版)</title>
+  <title>Deafbakery 組織圖 (雲端版ㄅtitle>
   
   <!-- 1. 樣式庫 -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- 2. 核心程式庫 (移除 crossorigin 以提高 file:// 相容性) -->
+  <!-- 2. 核心程式庫 (移除 crossorigin 以相容 file:// 模式) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
@@ -19,14 +19,9 @@
   
   <style>
     body { background-color: #fff7ed; color: #44403c; font-family: sans-serif; overflow: hidden; }
-    
-    /* 錯誤訊息樣式 */
     #error-container { display: none; padding: 20px; background: #fee2e2; color: #991b1b; border-bottom: 1px solid #f87171; position: fixed; top: 0; left: 0; width: 100%; z-index: 10000; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-    
-    /* 載入畫面 */
     #loading { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff7ed; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 5000; font-size: 1.2rem; color: #ea580c; transition: opacity 0.5s; }
     .loading-text { margin-top: 10px; font-size: 0.9rem; color: #78716c; }
-    
     .scrollbar-hide::-webkit-scrollbar { display: none; }
     .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
     .cursor-grab { cursor: grab; }
@@ -34,54 +29,46 @@
   </style>
 </head>
 <body>
-  <!-- 系統層級錯誤顯示 -->
   <div id="error-container"></div>
-  
-  <!-- 載入動畫 -->
   <div id="loading">
     <div class="font-bold text-xl mb-2">Deafbakery 組織圖</div>
     <div>正在連線至雲端系統...</div>
     <div class="loading-text">若超過 5 秒未回應，將自動切換為單機模式</div>
   </div>
-
   <div id="root"></div>
 
   <script>
-    // 全域錯誤捕捉
     window.onerror = function(msg, src, line, col, error) {
       document.getElementById('loading').style.display = 'none';
       const el = document.getElementById('error-container');
       el.style.display = 'block';
-      
-      const errText = (msg === 'Script error.' && !src) 
-        ? '瀏覽器安全性限制導致無法讀取錯誤 (CORS)。\n這通常發生在直接開啟檔案 (file://) 時。\n請嘗試：\n1. 確保網路連線正常\n2. 重新整理網頁' 
-        : (error ? error.toString() : msg);
-        
+      const errText = (msg === 'Script error.' && !src) ? '瀏覽器安全性限制導致無法讀取錯誤 (CORS)。請確認網路連線正常。' : (error ? error.toString() : msg);
       el.innerHTML = '<strong>⚠️ 系統發生錯誤:</strong><br>' + errText + '<br><small>位置: ' + (line || '未知') + '</small>';
       console.error("Global Error:", error || msg);
     };
   </script>
 
   <script type="text/babel">
-    const { useState, useEffect, useRef, useMemo } = React;
+    const { useState, useEffect, useRef, useMemo, Component } = React;
 
-    // --- 安全的 Storage 存取函數 ---
-    const safeStorage = {
-      getItem: (key) => {
-        try { return localStorage.getItem(key); } catch (e) { return null; }
-      },
-      setItem: (key, value) => {
-        try { localStorage.setItem(key, value); } catch (e) { console.warn("Storage access denied"); }
-      },
-      getSession: (key) => {
-        try { return sessionStorage.getItem(key); } catch (e) { return null; }
-      },
-      setSession: (key, value) => {
-        try { sessionStorage.setItem(key, value); } catch (e) { console.warn("Storage access denied"); }
-      },
-      removeSession: (key) => {
-        try { sessionStorage.removeItem(key); } catch (e) {}
+    // --- 錯誤邊界 ---
+    class ErrorBoundary extends Component {
+      constructor(props) { super(props); this.state = { hasError: false }; }
+      static getDerivedStateFromError(error) { return { hasError: true }; }
+      componentDidCatch(error, errorInfo) { console.error("React Error:", error, errorInfo); }
+      render() {
+        if (this.state.hasError) return <div className="p-4 text-red-600 bg-red-100 rounded">此區塊發生錯誤，請重新整理。</div>;
+        return this.props.children;
       }
+    }
+
+    // --- 安全 Storage ---
+    const safeStorage = {
+      getItem: (k) => { try { return localStorage.getItem(k); } catch(e){return null;} },
+      setItem: (k, v) => { try { localStorage.setItem(k, v); } catch(e){} },
+      getSession: (k) => { try { return sessionStorage.getItem(k); } catch(e){return null;} },
+      setSession: (k, v) => { try { sessionStorage.setItem(k, v); } catch(e){} },
+      removeSession: (k) => { try { sessionStorage.removeItem(k); } catch(e){} }
     };
 
     // --- Firebase 設定 ---
@@ -96,20 +83,15 @@
 
     let db = null;
     let isCloud = false;
-    
     try {
       if (typeof firebase !== 'undefined') {
-        if (!firebase.apps.length) {
-          firebase.initializeApp(firebaseConfig);
-        }
+        if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
         db = firebase.firestore();
         isCloud = true;
       }
-    } catch (e) {
-      console.error("Firebase init failed:", e);
-    }
+    } catch (e) { console.error("Firebase init failed:", e); }
 
-    // --- 簡單圖示組件 ---
+    // --- 圖示 ---
     const Icon = ({ name, size=20 }) => {
       const p = {
         Users: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2 M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M22 21v-2a4 4 0 0 0-3-3.87 M16 3.13a4 4 0 0 1 0 7.75",
@@ -134,6 +116,7 @@
       return <svg width={size} height={size} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d={p[name] || "M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"} strokeLinecap="round" strokeLinejoin="round"/></svg>;
     };
 
+    // --- 預設資料 (備用輪胎) ---
     const INITIAL_DATA = [
       { id: "CEO", name: "潘信宏", title: "", managementTitle: "執行長", parentId: "" },
       { id: "COO", name: "潘重恩", title: "", managementTitle: "營運長", parentId: "CEO" },
@@ -253,7 +236,6 @@
       { id: "潘全恩", name: "潘全恩", title: "", managementTitle: "資訊長", parentId: "G_IT" },
     ];
 
-    // --- 排序功能 ---
     const sortChildren = (children) => {
       return children.sort((a, b) => {
         const aTitle = String(a.managementTitle || "").trim();
@@ -269,11 +251,9 @@
     const buildTree = (items) => {
       const lookup = {};
       const roots = [];
-      
       items.forEach(item => {
         lookup[item.id] = { ...item, children: [] };
       });
-
       items.forEach(item => {
         if (item.parentId && lookup[item.parentId]) {
           lookup[item.parentId].children.push(lookup[item.id]);
@@ -281,13 +261,11 @@
           roots.push(lookup[item.id]);
         }
       });
-
       Object.values(lookup).forEach(node => {
         if (node.children.length > 0) {
           node.children = sortChildren(node.children);
         }
       });
-      
       return sortChildren(roots);
     };
 
@@ -296,24 +274,20 @@
       const isOrgUnit = node.id.startsWith('C_') || node.id.startsWith('D_') || node.id.startsWith('G_');
       const hasChildren = node.children.length > 0;
       const isGrid = hasChildren && node.children.length > 8;
-      
       return (
         <div className={`flex flex-col items-center mx-2 ${isGrid ? 'w-full' : ''}`}>
           <div onClick={() => hasChildren && setExpanded(!expanded)} className={`relative flex flex-col items-center justify-center p-3 mb-4 rounded-lg shadow-sm border transition-all hover:shadow-md ${hasChildren ? 'cursor-pointer hover:scale-105' : 'cursor-default'} ${isOrgUnit ? 'bg-amber-100 border-amber-300 w-32 min-h-[60px]' : 'bg-white border-stone-200 w-36 min-h-[80px]'}`}>
             {!hideTopConnector && <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-px h-5 bg-stone-300"></div>}
-            
             <div className={`font-bold text-center ${isOrgUnit ? 'text-amber-900 text-lg' : 'text-stone-800 text-base'}`}>{node.name}</div>
             {!isOrgUnit && <><div className="text-xs font-medium text-orange-600 mt-1 bg-orange-50 px-2 py-0.5 rounded-full">{node.managementTitle}</div><div className="text-xs text-stone-500 mt-1 text-center">{node.title}</div></>}
             {hasChildren && <div className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 w-5 h-5 bg-white border border-stone-300 rounded-full flex items-center justify-center text-stone-500 text-[10px] shadow-sm z-10">{expanded ? '-' : '+'}</div>}
           </div>
-          
           {hasChildren && expanded && (
             <div className="flex flex-col items-center animate-fadeIn w-full">
               <div className="w-px h-4 bg-stone-300"></div>
               {isGrid ? (
                 <div className="w-full pt-3 border-t-2 border-stone-300 flex justify-center">
                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 w-full">
-                      {/* Grid 模式：強制顯示 Top Connector 以連接到橫槓 (hideTopConnector=false) */}
                       {node.children.map(child => <div key={child.id} className="flex justify-center"><TreeNode node={child} hideTopConnector={false} /></div>)}
                    </div>
                 </div>
@@ -355,9 +329,7 @@
 
     function App() {
       const [employees, setEmployees] = useState([]);
-      const getInitialAdminState = () => {
-        try { return safeStorage.getSession('isAdmin') === 'true'; } catch(e) { return false; }
-      };
+      const getInitialAdminState = () => { try { return safeStorage.getSession('isAdmin') === 'true'; } catch(e) { return false; } };
       const [isAdmin, setIsAdmin] = useState(getInitialAdminState());
       const [password, setPassword] = useState("");
       const [showLogin, setShowLogin] = useState(false);
@@ -376,9 +348,7 @@
       useEffect(() => {
         if (isCloud && db) {
           const unsubscribe = db.collection('employees').onSnapshot(snapshot => {
-            if (snapshot.empty) {
-              setEmployees([]); 
-            } else {
+            if (snapshot.empty) { setEmployees([]); } else {
               const cloudData = snapshot.docs.map(doc => doc.data());
               setEmployees(cloudData);
             }
@@ -401,11 +371,7 @@
           const loading = document.getElementById('loading');
           if(loading) loading.style.display = 'none';
           const saved = safeStorage.getItem('deafbakery_org_data');
-          if (saved) {
-            try { setData(JSON.parse(saved)); } catch(e) { setData(INITIAL_DATA); }
-          } else {
-            setData(INITIAL_DATA);
-          }
+          if (saved) { try { setData(JSON.parse(saved)); } catch(e) { setData(INITIAL_DATA); } } else { setData(INITIAL_DATA); }
         }
       }, []);
 
@@ -421,10 +387,7 @@
         } else { alert("密碼錯誤"); }
       };
 
-      const handleLogout = () => {
-        setIsAdmin(false);
-        safeStorage.removeSession('isAdmin');
-      };
+      const handleLogout = () => { setIsAdmin(false); safeStorage.removeSession('isAdmin'); };
 
       const handleDelete = async (id) => {
         if (!window.confirm(`確定要刪除 ${id} 嗎？`)) return;
@@ -456,11 +419,7 @@
         const newId = `NEW_${Date.now()}`;
         const newEmp = { id: newId, name: "新成員", title: "", managementTitle: "", parentId: "" };
         if (isCloud && db) {
-          try {
-            await db.collection('employees').doc(newId).set(newEmp);
-            setEditingId(newId);
-            setEditForm(newEmp);
-          } catch (e) { alert("新增失敗: " + e.message); }
+          try { await db.collection('employees').doc(newId).set(newEmp); setEditingId(newId); setEditForm(newEmp); } catch (e) { alert("新增失敗: " + e.message); }
         } else {
           const newData = [...employees, newEmp];
           setEmployees(newData);
@@ -481,9 +440,7 @@
           });
           await batch.commit();
           alert("雲端資料初始化成功！");
-        } catch (e) {
-          alert("初始化失敗: " + e.message);
-        }
+        } catch (e) { alert("初始化失敗: " + e.message); }
       };
 
       const handleCopyCode = () => {
@@ -519,6 +476,7 @@
       const handleResetZoom = () => setZoom(1);
 
       return (
+        <ErrorBoundary>
         <div className="min-h-screen bg-orange-50 font-sans text-stone-800 flex flex-col h-screen w-full">
           {errorMsg && (
             <div className="bg-red-600 text-white px-4 py-3 shadow-md relative z-[9999] flex items-center justify-between">
@@ -669,6 +627,7 @@
             </div>
           )}
         </div>
+        </ErrorBoundary>
       );
     }
 
