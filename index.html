@@ -5,17 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Deafbakery 組織圖 (雲端版)</title>
   
-  <!-- 樣式庫 -->
+  <!-- 1. 樣式庫 -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- 核心程式庫 (更換為 unpkg 以解決 Script Error) -->
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <!-- 2. 核心程式庫 (全部更換為 cdnjs 以解決跨域錯誤) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js" crossorigin="anonymous"></script>
 
-  <!-- Firebase (保持版本一致) -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <!-- 3. Firebase (更換為 cdnjs 版本) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-app-compat.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-firestore-compat.min.js" crossorigin="anonymous"></script>
   
   <style>
     body { background-color: #fff7ed; color: #44403c; font-family: sans-serif; overflow: hidden; }
@@ -52,8 +52,12 @@
       document.getElementById('loading').style.display = 'none';
       const el = document.getElementById('error-container');
       el.style.display = 'block';
-      const errText = error ? error.toString() : msg;
-      el.innerHTML = '<strong>⚠️ 系統發生未預期錯誤:</strong><br>' + errText + '<br><small>位置: ' + (line || '未知') + '</small><br><br>請嘗試重新整理網頁。';
+      // 嘗試解析 Script Error
+      const errText = (msg === 'Script error.' && !src) 
+        ? '無法載入外部程式庫 (CORS 錯誤)。\n這通常發生在直接開啟檔案 (file://) 時。\n請嘗試使用 Chrome 擴充功能 "Web Server for Chrome" 開啟，或將檔案上傳至 GitHub Pages。' 
+        : (error ? error.toString() : msg);
+        
+      el.innerHTML = '<strong>⚠️ 系統發生錯誤:</strong><br>' + errText + '<br><small>位置: ' + (line || '未知') + '</small>';
       console.error("Global Error:", error || msg);
     };
   </script>
@@ -62,7 +66,6 @@
     const { useState, useEffect, useRef, useMemo, Component } = React;
 
     // --- 錯誤邊界元件 (Error Boundary) ---
-    // 這可以捕捉 React 內部的錯誤，避免整個網頁白畫面
     class ErrorBoundary extends Component {
       constructor(props) {
         super(props);
@@ -258,13 +261,17 @@
       { id: "潘全恩", name: "潘全恩", title: "", managementTitle: "資訊長", parentId: "G_IT" },
     ];
 
-    // --- 排序功能 ---
+    // --- 排序功能：有管理職稱者優先 (且不為空白) ---
     const sortChildren = (children) => {
       return children.sort((a, b) => {
+        // 取得管理職稱，若為 null/undefined 則視為空字串
         const aTitle = String(a.managementTitle || "").trim();
         const bTitle = String(b.managementTitle || "").trim();
+        
         const aHas = aTitle.length > 0;
         const bHas = bTitle.length > 0;
+        
+        // 有職稱的排在前面 (-1)
         if (aHas && !bHas) return -1;
         if (!aHas && bHas) return 1;
         return 0; 
@@ -274,9 +281,13 @@
     const buildTree = (items) => {
       const lookup = {};
       const roots = [];
+      
+      // 1. 初始化
       items.forEach(item => {
         lookup[item.id] = { ...item, children: [] };
       });
+
+      // 2. 建立關係
       items.forEach(item => {
         if (item.parentId && lookup[item.parentId]) {
           lookup[item.parentId].children.push(lookup[item.id]);
@@ -284,11 +295,14 @@
           roots.push(lookup[item.id]);
         }
       });
+
+      // 3. 排序所有子節點
       Object.values(lookup).forEach(node => {
         if (node.children.length > 0) {
           node.children = sortChildren(node.children);
         }
       });
+      
       return sortChildren(roots);
     };
 
@@ -301,17 +315,21 @@
       return (
         <div className={`flex flex-col items-center mx-2 ${isGrid ? 'w-full' : ''}`}>
           <div onClick={() => hasChildren && setExpanded(!expanded)} className={`relative flex flex-col items-center justify-center p-3 mb-4 rounded-lg shadow-sm border transition-all hover:shadow-md ${hasChildren ? 'cursor-pointer hover:scale-105' : 'cursor-default'} ${isOrgUnit ? 'bg-amber-100 border-amber-300 w-32 min-h-[60px]' : 'bg-white border-stone-200 w-36 min-h-[80px]'}`}>
+            {/* 上方連接線：Grid 模式下若被隱藏則不顯示，否則顯示 */}
             {!hideTopConnector && <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-px h-5 bg-stone-300"></div>}
+            
             <div className={`font-bold text-center ${isOrgUnit ? 'text-amber-900 text-lg' : 'text-stone-800 text-base'}`}>{node.name}</div>
             {!isOrgUnit && <><div className="text-xs font-medium text-orange-600 mt-1 bg-orange-50 px-2 py-0.5 rounded-full">{node.managementTitle}</div><div className="text-xs text-stone-500 mt-1 text-center">{node.title}</div></>}
             {hasChildren && <div className="absolute -bottom-2.5 left-1/2 -translate-x-1/2 w-5 h-5 bg-white border border-stone-300 rounded-full flex items-center justify-center text-stone-500 text-[10px] shadow-sm z-10">{expanded ? '-' : '+'}</div>}
           </div>
+          
           {hasChildren && expanded && (
             <div className="flex flex-col items-center animate-fadeIn w-full">
               <div className="w-px h-4 bg-stone-300"></div>
               {isGrid ? (
                 <div className="w-full pt-3 border-t-2 border-stone-300 flex justify-center">
                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 w-full">
+                      {/* Grid 模式：強制顯示 Top Connector 以連接到橫槓 (hideTopConnector=false) */}
                       {node.children.map(child => <div key={child.id} className="flex justify-center"><TreeNode node={child} hideTopConnector={false} /></div>)}
                    </div>
                 </div>
