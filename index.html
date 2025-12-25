@@ -5,43 +5,88 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Deafbakery 組織圖 (雲端版)</title>
   
+  <!-- 樣式庫 -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js" crossorigin="anonymous"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js" crossorigin="anonymous"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js" crossorigin="anonymous"></script>
+
+  <!-- 核心程式庫 (更換為 unpkg 以解決 Script Error) -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Firebase (保持版本一致) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   
   <style>
     body { background-color: #fff7ed; color: #44403c; font-family: sans-serif; overflow: hidden; }
-    #error-container { display: none; padding: 20px; background: #fee2e2; color: #991b1b; border-bottom: 1px solid #f87171; position: fixed; top: 0; left: 0; width: 100%; z-index: 10000; }
+    
+    /* 錯誤訊息樣式 */
+    #error-container { display: none; padding: 20px; background: #fee2e2; color: #991b1b; border-bottom: 1px solid #f87171; position: fixed; top: 0; left: 0; width: 100%; z-index: 10000; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+    
+    /* 載入畫面 */
     #loading { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff7ed; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 5000; font-size: 1.2rem; color: #ea580c; transition: opacity 0.5s; }
     .loading-text { margin-top: 10px; font-size: 0.9rem; color: #78716c; }
+    
     .scrollbar-hide::-webkit-scrollbar { display: none; }
+    .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
     .cursor-grab { cursor: grab; }
     .cursor-grabbing { cursor: grabbing; }
   </style>
 </head>
 <body>
+  <!-- 系統層級錯誤顯示 -->
   <div id="error-container"></div>
+  
+  <!-- 載入動畫 -->
   <div id="loading">
+    <div class="font-bold text-xl mb-2">Deafbakery 組織圖</div>
     <div>正在連線至雲端系統...</div>
     <div class="loading-text">若超過 5 秒未回應，將自動切換為單機模式</div>
   </div>
+
   <div id="root"></div>
 
   <script>
-    // 全域錯誤處理
+    // 全域錯誤捕捉 (最後防線)
     window.onerror = function(msg, src, line, col, error) {
       document.getElementById('loading').style.display = 'none';
       const el = document.getElementById('error-container');
       el.style.display = 'block';
-      el.innerHTML = '<strong>⚠️ 系統錯誤 (System Error):</strong><br>' + msg + '<br><small>來源: ' + src + ':' + line + '</small>';
+      const errText = error ? error.toString() : msg;
+      el.innerHTML = '<strong>⚠️ 系統發生未預期錯誤:</strong><br>' + errText + '<br><small>位置: ' + (line || '未知') + '</small><br><br>請嘗試重新整理網頁。';
+      console.error("Global Error:", error || msg);
     };
   </script>
 
   <script type="text/babel">
-    const { useState, useEffect, useRef, useMemo } = React;
+    const { useState, useEffect, useRef, useMemo, Component } = React;
+
+    // --- 錯誤邊界元件 (Error Boundary) ---
+    // 這可以捕捉 React 內部的錯誤，避免整個網頁白畫面
+    class ErrorBoundary extends Component {
+      constructor(props) {
+        super(props);
+        this.state = { hasError: false, error: null };
+      }
+      static getDerivedStateFromError(error) {
+        return { hasError: true, error };
+      }
+      componentDidCatch(error, errorInfo) {
+        console.error("React Error:", error, errorInfo);
+      }
+      render() {
+        if (this.state.hasError) {
+          return (
+            <div className="p-10 text-center">
+              <h2 className="text-2xl font-bold text-red-600 mb-4">⚠️ 介面載入失敗</h2>
+              <p className="text-stone-600 mb-4">{this.state.error && this.state.error.toString()}</p>
+              <button onClick={() => window.location.reload()} className="bg-stone-500 text-white px-4 py-2 rounded">重新整理</button>
+            </div>
+          );
+        }
+        return this.props.children;
+      }
+    }
 
     // --- Firebase 設定 ---
     const firebaseConfig = {
@@ -55,15 +100,21 @@
 
     let db = null;
     let isCloud = false;
+    
+    // 安全初始化 Firebase
     try {
       if (typeof firebase !== 'undefined') {
-        firebase.initializeApp(firebaseConfig);
+        if (!firebase.apps.length) {
+          firebase.initializeApp(firebaseConfig);
+        }
         db = firebase.firestore();
         isCloud = true;
       }
-    } catch (e) { console.error("Firebase init error:", e); }
+    } catch (e) {
+      console.error("Firebase init failed:", e);
+    }
 
-    // --- 圖示組件 ---
+    // --- 簡單圖示組件 ---
     const Icon = ({ name, size=20 }) => {
       const p = {
         Users: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2 M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M22 21v-2a4 4 0 0 0-3-3.87 M16 3.13a4 4 0 0 1 0 7.75",
@@ -207,28 +258,25 @@
       { id: "潘全恩", name: "潘全恩", title: "", managementTitle: "資訊長", parentId: "G_IT" },
     ];
 
-    // --- 排序功能：有管理職稱者優先 ---
+    // --- 排序功能 ---
     const sortChildren = (children) => {
       return children.sort((a, b) => {
-        // 判斷邏輯：有值 (truthy) 給 -1 (排前面)，無值給 1 (排後面)
-        const aHas = !!a.managementTitle;
-        const bHas = !!b.managementTitle;
+        const aTitle = String(a.managementTitle || "").trim();
+        const bTitle = String(b.managementTitle || "").trim();
+        const aHas = aTitle.length > 0;
+        const bHas = bTitle.length > 0;
         if (aHas && !bHas) return -1;
         if (!aHas && bHas) return 1;
-        return 0; // 若都有或都沒有，維持原順序
+        return 0; 
       });
     };
 
     const buildTree = (items) => {
       const lookup = {};
       const roots = [];
-      
-      // 1. 初始化每個節點
       items.forEach(item => {
         lookup[item.id] = { ...item, children: [] };
       });
-
-      // 2. 建立親子關係
       items.forEach(item => {
         if (item.parentId && lookup[item.parentId]) {
           lookup[item.parentId].children.push(lookup[item.id]);
@@ -236,15 +284,11 @@
           roots.push(lookup[item.id]);
         }
       });
-
-      // 3. 對所有節點的 children 進行排序 (管理職優先)
       Object.values(lookup).forEach(node => {
         if (node.children.length > 0) {
           node.children = sortChildren(node.children);
         }
       });
-      
-      // 對根節點也排序 (如果有並列的根節點)
       return sortChildren(roots);
     };
 
@@ -268,7 +312,7 @@
               {isGrid ? (
                 <div className="w-full pt-3 border-t-2 border-stone-300 flex justify-center">
                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 w-full">
-                      {node.children.map(child => <div key={child.id} className="flex justify-center"><TreeNode node={child} hideTopConnector={true} /></div>)}
+                      {node.children.map(child => <div key={child.id} className="flex justify-center"><TreeNode node={child} hideTopConnector={false} /></div>)}
                    </div>
                 </div>
               ) : (
@@ -309,7 +353,11 @@
 
     function App() {
       const [employees, setEmployees] = useState([]);
-      const [isAdmin, setIsAdmin] = useState(false);
+      // 安全讀取 sessionStorage，避免在無痕或特定環境下報錯
+      const getInitialAdminState = () => {
+        try { return sessionStorage.getItem('isAdmin') === 'true'; } catch(e) { return false; }
+      };
+      const [isAdmin, setIsAdmin] = useState(getInitialAdminState());
       const [password, setPassword] = useState("");
       const [showLogin, setShowLogin] = useState(false);
       const [zoom, setZoom] = useState(1);
@@ -322,10 +370,8 @@
       const [scrollTop, setScrollTop] = useState(0);
       const [scrollLeft, setScrollLeft] = useState(0);
       const [startY, setStartY] = useState(0);
-      
       const [errorMsg, setErrorMsg] = useState(null); 
 
-      // 載入資料 (優先從 Firestore)
       useEffect(() => {
         if (isCloud && db) {
           const unsubscribe = db.collection('employees').onSnapshot(snapshot => {
@@ -351,7 +397,6 @@
           });
           return () => unsubscribe();
         } else {
-          // 單機模式
           const loading = document.getElementById('loading');
           if(loading) loading.style.display = 'none';
           const saved = localStorage.getItem('deafbakery_org_data');
@@ -367,16 +412,23 @@
 
       const handleLogin = (e) => {
         e.preventDefault();
-        if (password === '25773388') { setIsAdmin(true); setShowLogin(false); setPassword(""); } else { alert("密碼錯誤"); }
+        if (password === '25773388') { 
+          setIsAdmin(true); 
+          try { sessionStorage.setItem('isAdmin', 'true'); } catch(e) {} 
+          setShowLogin(false); 
+          setPassword(""); 
+        } else { alert("密碼錯誤"); }
+      };
+
+      const handleLogout = () => {
+        setIsAdmin(false);
+        try { sessionStorage.removeItem('isAdmin'); } catch(e) {}
       };
 
       const handleDelete = async (id) => {
         if (!window.confirm(`確定要刪除 ${id} 嗎？`)) return;
-        
         if (isCloud && db) {
-          try {
-            await db.collection('employees').doc(id).delete();
-          } catch (e) { alert("刪除失敗: " + e.message); }
+          try { await db.collection('employees').doc(id).delete(); } catch(e) { alert("刪除失敗: " + e.message); }
         } else {
           const newData = employees.filter(e => e.id !== id);
           setEmployees(newData);
@@ -402,7 +454,6 @@
       const handleAdd = async () => {
         const newId = `NEW_${Date.now()}`;
         const newEmp = { id: newId, name: "新成員", title: "", managementTitle: "", parentId: "" };
-        
         if (isCloud && db) {
           try {
             await db.collection('employees').doc(newId).set(newEmp);
@@ -421,7 +472,6 @@
       const handleInitCloud = async () => {
         if (!isCloud && !db) return;
         if (!window.confirm("確定要將預設資料寫入雲端嗎？這會覆蓋雲端現有資料。")) return;
-        
         try {
           const batch = db.batch();
           INITIAL_DATA.forEach(emp => {
@@ -442,7 +492,6 @@
         alert("程式碼已複製！");
       };
 
-      // Mouse Drag Events
       const onMouseDown = (e) => {
         if (!scrollContainerRef.current) return;
         setIsDragging(true);
@@ -469,8 +518,8 @@
       const handleResetZoom = () => setZoom(1);
 
       return (
+        <ErrorBoundary>
         <div className="min-h-screen bg-orange-50 font-sans text-stone-800 flex flex-col h-screen w-full">
-          
           {errorMsg && (
             <div className="bg-red-600 text-white px-4 py-3 shadow-md relative z-[9999] flex items-center justify-between">
               <div className="flex items-center gap-2 whitespace-pre-wrap text-sm">
@@ -492,7 +541,7 @@
                     Deafbakery 組織圖 <span className="text-xs font-normal text-stone-400 ml-1">{isCloud ? '(雲端連線中)' : '(單機模式)'}</span>
                   </h1>
                 </div>
-                <button onClick={() => isAdmin ? setIsAdmin(false) : setShowLogin(true)} className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all text-sm font-medium ${isAdmin ? 'bg-stone-100 text-stone-600 hover:bg-stone-200' : 'bg-stone-800 text-white hover:bg-stone-900 shadow-md hover:shadow-lg'}`}>
+                <button onClick={() => isAdmin ? handleLogout() : setShowLogin(true)} className={`flex items-center gap-2 px-4 py-2 rounded-full transition-all text-sm font-medium ${isAdmin ? 'bg-stone-100 text-stone-600 hover:bg-stone-200' : 'bg-stone-800 text-white hover:bg-stone-900 shadow-md hover:shadow-lg'}`}>
                   {isAdmin ? <><Icon name="LogOut" size={16} /> 退出編輯</> : <><Icon name="LogIn" size={16} /> 登入編輯</>}
                 </button>
               </div>
@@ -620,6 +669,7 @@
             </div>
           )}
         </div>
+        </ErrorBoundary>
       );
     }
 
