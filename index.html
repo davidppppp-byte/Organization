@@ -1,21 +1,21 @@
-!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Deafbakery 組織圖 (穩定版)</title>
+  <title>Deafbakery 組織圖 (雲端穩定版)</title>
   
   <!-- 1. 樣式庫 -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- 2. 核心程式庫 (改用 React 17 以求最高穩定性，移除 crossorigin 避免 CORS 誤判) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+  <!-- 2. 核心程式庫 (加入 crossorigin 以顯示詳細錯誤) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.production.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js" crossorigin="anonymous"></script>
 
-  <!-- 3. Firebase (使用 Google 官方 CDN) -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <!-- 3. Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js" crossorigin="anonymous"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js" crossorigin="anonymous"></script>
   
   <style>
     body { background-color: #fff7ed; color: #44403c; font-family: sans-serif; overflow: hidden; }
@@ -52,8 +52,10 @@
       document.getElementById('loading').style.display = 'none';
       const el = document.getElementById('error-container');
       el.style.display = 'block';
+      
+      // 如果加了 crossorigin 還是 Script error，提供更具體的建議
       const errText = (msg === 'Script error.' && !src) 
-        ? '瀏覽器安全性限制導致無法讀取錯誤 (CORS)。\n建議：請勿直接點擊 HTML 開啟，請將檔案拖曳到 Chrome 視窗中，或是使用 GitHub Pages 瀏覽。' 
+        ? '發生未知的跨域錯誤。請嘗試：\n1. 按下 F12 開啟開發者工具查看 Console\n2. 確保網路沒有阻擋 CDN\n3. 不要使用 IE 瀏覽器' 
         : (error ? error.toString() : msg);
         
       el.innerHTML = '<strong>⚠️ 系統發生錯誤:</strong><br>' + errText + '<br><small>位置: ' + (line || '未知') + '</small>';
@@ -64,7 +66,7 @@
   <script type="text/babel">
     const { useState, useEffect, useRef, useMemo } = React;
 
-    // --- 安全的 Storage 存取函數 (避免隱私模式報錯) ---
+    // --- 安全的 Storage 存取函數 ---
     const safeStorage = {
       getItem: (key) => {
         try { return localStorage.getItem(key); } catch (e) { return null; }
@@ -96,7 +98,6 @@
     let db = null;
     let isCloud = false;
     
-    // 安全初始化 Firebase
     try {
       if (typeof firebase !== 'undefined') {
         if (!firebase.apps.length) {
@@ -315,6 +316,7 @@
               {isGrid ? (
                 <div className="w-full pt-3 border-t-2 border-stone-300 flex justify-center">
                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 w-full">
+                      {/* Grid 模式：強制顯示 Top Connector 以連接到橫槓 (hideTopConnector=false) */}
                       {node.children.map(child => <div key={child.id} className="flex justify-center"><TreeNode node={child} hideTopConnector={false} /></div>)}
                    </div>
                 </div>
