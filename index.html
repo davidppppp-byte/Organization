@@ -1,21 +1,21 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="zh-TW">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Deafbakery 組織圖 (雲端版)</title>
+  <title>Deafbakery 組織圖 (穩定版)</title>
   
   <!-- 1. 樣式庫 -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- 2. 核心程式庫 (全部更換為 cdnjs 以解決跨域錯誤) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js" crossorigin="anonymous"></script>
+  <!-- 2. 核心程式庫 (改用 React 17 以求最高穩定性，移除 crossorigin 避免 CORS 誤判) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
 
-  <!-- 3. Firebase (更換為 cdnjs 版本) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-app-compat.min.js" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-firestore-compat.min.js" crossorigin="anonymous"></script>
+  <!-- 3. Firebase (使用 Google 官方 CDN) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   
   <style>
     body { background-color: #fff7ed; color: #44403c; font-family: sans-serif; overflow: hidden; }
@@ -47,14 +47,13 @@
   <div id="root"></div>
 
   <script>
-    // 全域錯誤捕捉 (最後防線)
+    // 全域錯誤捕捉
     window.onerror = function(msg, src, line, col, error) {
       document.getElementById('loading').style.display = 'none';
       const el = document.getElementById('error-container');
       el.style.display = 'block';
-      // 嘗試解析 Script Error
       const errText = (msg === 'Script error.' && !src) 
-        ? '無法載入外部程式庫 (CORS 錯誤)。\n這通常發生在直接開啟檔案 (file://) 時。\n請嘗試使用 Chrome 擴充功能 "Web Server for Chrome" 開啟，或將檔案上傳至 GitHub Pages。' 
+        ? '瀏覽器安全性限制導致無法讀取錯誤 (CORS)。\n建議：請勿直接點擊 HTML 開啟，請將檔案拖曳到 Chrome 視窗中，或是使用 GitHub Pages 瀏覽。' 
         : (error ? error.toString() : msg);
         
       el.innerHTML = '<strong>⚠️ 系統發生錯誤:</strong><br>' + errText + '<br><small>位置: ' + (line || '未知') + '</small>';
@@ -63,33 +62,26 @@
   </script>
 
   <script type="text/babel">
-    const { useState, useEffect, useRef, useMemo, Component } = React;
+    const { useState, useEffect, useRef, useMemo } = React;
 
-    // --- 錯誤邊界元件 (Error Boundary) ---
-    class ErrorBoundary extends Component {
-      constructor(props) {
-        super(props);
-        this.state = { hasError: false, error: null };
+    // --- 安全的 Storage 存取函數 (避免隱私模式報錯) ---
+    const safeStorage = {
+      getItem: (key) => {
+        try { return localStorage.getItem(key); } catch (e) { return null; }
+      },
+      setItem: (key, value) => {
+        try { localStorage.setItem(key, value); } catch (e) { console.warn("Storage access denied"); }
+      },
+      getSession: (key) => {
+        try { return sessionStorage.getItem(key); } catch (e) { return null; }
+      },
+      setSession: (key, value) => {
+        try { sessionStorage.setItem(key, value); } catch (e) { console.warn("Storage access denied"); }
+      },
+      removeSession: (key) => {
+        try { sessionStorage.removeItem(key); } catch (e) {}
       }
-      static getDerivedStateFromError(error) {
-        return { hasError: true, error };
-      }
-      componentDidCatch(error, errorInfo) {
-        console.error("React Error:", error, errorInfo);
-      }
-      render() {
-        if (this.state.hasError) {
-          return (
-            <div className="p-10 text-center">
-              <h2 className="text-2xl font-bold text-red-600 mb-4">⚠️ 介面載入失敗</h2>
-              <p className="text-stone-600 mb-4">{this.state.error && this.state.error.toString()}</p>
-              <button onClick={() => window.location.reload()} className="bg-stone-500 text-white px-4 py-2 rounded">重新整理</button>
-            </div>
-          );
-        }
-        return this.props.children;
-      }
-    }
+    };
 
     // --- Firebase 設定 ---
     const firebaseConfig = {
@@ -264,14 +256,12 @@
     // --- 排序功能：有管理職稱者優先 (且不為空白) ---
     const sortChildren = (children) => {
       return children.sort((a, b) => {
-        // 取得管理職稱，若為 null/undefined 則視為空字串
         const aTitle = String(a.managementTitle || "").trim();
         const bTitle = String(b.managementTitle || "").trim();
         
         const aHas = aTitle.length > 0;
         const bHas = bTitle.length > 0;
         
-        // 有職稱的排在前面 (-1)
         if (aHas && !bHas) return -1;
         if (!aHas && bHas) return 1;
         return 0; 
@@ -282,12 +272,10 @@
       const lookup = {};
       const roots = [];
       
-      // 1. 初始化
       items.forEach(item => {
         lookup[item.id] = { ...item, children: [] };
       });
 
-      // 2. 建立關係
       items.forEach(item => {
         if (item.parentId && lookup[item.parentId]) {
           lookup[item.parentId].children.push(lookup[item.id]);
@@ -296,7 +284,6 @@
         }
       });
 
-      // 3. 排序所有子節點
       Object.values(lookup).forEach(node => {
         if (node.children.length > 0) {
           node.children = sortChildren(node.children);
@@ -315,7 +302,6 @@
       return (
         <div className={`flex flex-col items-center mx-2 ${isGrid ? 'w-full' : ''}`}>
           <div onClick={() => hasChildren && setExpanded(!expanded)} className={`relative flex flex-col items-center justify-center p-3 mb-4 rounded-lg shadow-sm border transition-all hover:shadow-md ${hasChildren ? 'cursor-pointer hover:scale-105' : 'cursor-default'} ${isOrgUnit ? 'bg-amber-100 border-amber-300 w-32 min-h-[60px]' : 'bg-white border-stone-200 w-36 min-h-[80px]'}`}>
-            {/* 上方連接線：Grid 模式下若被隱藏則不顯示，否則顯示 */}
             {!hideTopConnector && <div className="absolute -top-5 left-1/2 -translate-x-1/2 w-px h-5 bg-stone-300"></div>}
             
             <div className={`font-bold text-center ${isOrgUnit ? 'text-amber-900 text-lg' : 'text-stone-800 text-base'}`}>{node.name}</div>
@@ -329,7 +315,6 @@
               {isGrid ? (
                 <div className="w-full pt-3 border-t-2 border-stone-300 flex justify-center">
                    <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 w-full">
-                      {/* Grid 模式：強制顯示 Top Connector 以連接到橫槓 (hideTopConnector=false) */}
                       {node.children.map(child => <div key={child.id} className="flex justify-center"><TreeNode node={child} hideTopConnector={false} /></div>)}
                    </div>
                 </div>
@@ -371,9 +356,8 @@
 
     function App() {
       const [employees, setEmployees] = useState([]);
-      // 安全讀取 sessionStorage，避免在無痕或特定環境下報錯
       const getInitialAdminState = () => {
-        try { return sessionStorage.getItem('isAdmin') === 'true'; } catch(e) { return false; }
+        try { return safeStorage.getSession('isAdmin') === 'true'; } catch(e) { return false; }
       };
       const [isAdmin, setIsAdmin] = useState(getInitialAdminState());
       const [password, setPassword] = useState("");
@@ -417,7 +401,7 @@
         } else {
           const loading = document.getElementById('loading');
           if(loading) loading.style.display = 'none';
-          const saved = localStorage.getItem('deafbakery_org_data');
+          const saved = safeStorage.getItem('deafbakery_org_data');
           if (saved) {
             try { setData(JSON.parse(saved)); } catch(e) { setData(INITIAL_DATA); }
           } else {
@@ -432,7 +416,7 @@
         e.preventDefault();
         if (password === '25773388') { 
           setIsAdmin(true); 
-          try { sessionStorage.setItem('isAdmin', 'true'); } catch(e) {} 
+          safeStorage.setSession('isAdmin', 'true');
           setShowLogin(false); 
           setPassword(""); 
         } else { alert("密碼錯誤"); }
@@ -440,7 +424,7 @@
 
       const handleLogout = () => {
         setIsAdmin(false);
-        try { sessionStorage.removeItem('isAdmin'); } catch(e) {}
+        safeStorage.removeSession('isAdmin');
       };
 
       const handleDelete = async (id) => {
@@ -450,7 +434,7 @@
         } else {
           const newData = employees.filter(e => e.id !== id);
           setEmployees(newData);
-          localStorage.setItem('deafbakery_org_data', JSON.stringify(newData));
+          safeStorage.setItem('deafbakery_org_data', JSON.stringify(newData));
         }
       };
 
@@ -463,7 +447,7 @@
         } else {
           const newData = employees.map(e => e.id === editingId ? editForm : e);
           setEmployees(newData);
-          localStorage.setItem('deafbakery_org_data', JSON.stringify(newData));
+          safeStorage.setItem('deafbakery_org_data', JSON.stringify(newData));
           setEditingId(null);
           alert("已暫存於本機。若要永久生效請更新檔案或設定雲端。");
         }
@@ -481,7 +465,7 @@
         } else {
           const newData = [...employees, newEmp];
           setEmployees(newData);
-          localStorage.setItem('deafbakery_org_data', JSON.stringify(newData));
+          safeStorage.setItem('deafbakery_org_data', JSON.stringify(newData));
           setEditingId(newId);
           setEditForm(newEmp);
         }
@@ -536,7 +520,6 @@
       const handleResetZoom = () => setZoom(1);
 
       return (
-        <ErrorBoundary>
         <div className="min-h-screen bg-orange-50 font-sans text-stone-800 flex flex-col h-screen w-full">
           {errorMsg && (
             <div className="bg-red-600 text-white px-4 py-3 shadow-md relative z-[9999] flex items-center justify-between">
@@ -677,7 +660,7 @@
               <div className="bg-white rounded-2xl shadow-xl p-6 w-full max-w-sm animate-scaleIn">
                 <h3 className="text-lg font-bold text-stone-800 mb-4">管理員登入</h3>
                 <form onSubmit={handleLogin}>
-                  <input type="password" placeholder="輸入密碼" className="w-full p-3 border border-stone-200 rounded-lg mb-4 focus:ring-2 focus:ring-orange-300 outline-none transition-all" value={password} onChange={e => setPassword(e.target.value)} autoFocus />
+                  <input type="password" placeholder="輸入密碼" className="w-full p-3 border border-stone-200 rounded-lg mb-4 focus:ring-2 focus:ring-orange-300 outline-none transition-all" value={password} onChange={e => setPassword(e.target.value)} />
                   <div className="flex gap-2">
                     <button type="submit" className="flex-1 bg-orange-500 text-white py-2 rounded-lg hover:bg-orange-600 transition-colors">登入</button>
                     <button type="button" onClick={() => setShowLogin(false)} className="flex-1 bg-stone-100 text-stone-600 py-2 rounded-lg hover:bg-stone-200 transition-colors">取消</button>
@@ -687,12 +670,10 @@
             </div>
           )}
         </div>
-        </ErrorBoundary>
       );
     }
 
-    const root = ReactDOM.createRoot(document.getElementById('root'));
-    root.render(<App />);
+    ReactDOM.render(<App />, document.getElementById('root'));
   </script>
 </body>
 </html>
