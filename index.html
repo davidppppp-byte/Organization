@@ -8,14 +8,14 @@
   <!-- 1. 樣式庫 -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- 2. 核心程式庫 (加入 crossorigin 以顯示詳細錯誤) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.production.min.js" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js" crossorigin="anonymous"></script>
+  <!-- 2. 核心程式庫 (移除 crossorigin 以提高 file:// 相容性) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
 
   <!-- 3. Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js" crossorigin="anonymous"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js" crossorigin="anonymous"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   
   <style>
     body { background-color: #fff7ed; color: #44403c; font-family: sans-serif; overflow: hidden; }
@@ -53,9 +53,8 @@
       const el = document.getElementById('error-container');
       el.style.display = 'block';
       
-      // 如果加了 crossorigin 還是 Script error，提供更具體的建議
       const errText = (msg === 'Script error.' && !src) 
-        ? '發生未知的跨域錯誤。請嘗試：\n1. 按下 F12 開啟開發者工具查看 Console\n2. 確保網路沒有阻擋 CDN\n3. 不要使用 IE 瀏覽器' 
+        ? '瀏覽器安全性限制導致無法讀取錯誤 (CORS)。\n這通常發生在直接開啟檔案 (file://) 時。\n請嘗試：\n1. 確保網路連線正常\n2. 重新整理網頁' 
         : (error ? error.toString() : msg);
         
       el.innerHTML = '<strong>⚠️ 系統發生錯誤:</strong><br>' + errText + '<br><small>位置: ' + (line || '未知') + '</small>';
@@ -254,15 +253,13 @@
       { id: "潘全恩", name: "潘全恩", title: "", managementTitle: "資訊長", parentId: "G_IT" },
     ];
 
-    // --- 排序功能：有管理職稱者優先 (且不為空白) ---
+    // --- 排序功能 ---
     const sortChildren = (children) => {
       return children.sort((a, b) => {
         const aTitle = String(a.managementTitle || "").trim();
         const bTitle = String(b.managementTitle || "").trim();
-        
         const aHas = aTitle.length > 0;
         const bHas = bTitle.length > 0;
-        
         if (aHas && !bHas) return -1;
         if (!aHas && bHas) return 1;
         return 0; 
@@ -624,11 +621,11 @@
                             <tr key={emp.id} className="hover:bg-orange-50 transition-colors">
                               {editingId === emp.id ? (
                                 <React.Fragment>
-                                  <td className="p-2"><input className="w-full p-1 border rounded" value={editForm.id} onChange={e => setEditForm({...editForm, id: e.target.value})} /></td>
-                                  <td className="p-2"><input className="w-full p-1 border rounded" value={editForm.name} onChange={e => setEditForm({...editForm, name: e.target.value})} /></td>
-                                  <td className="p-2"><input className="w-full p-1 border rounded" value={editForm.title} onChange={e => setEditForm({...editForm, title: e.target.value})} /></td>
-                                  <td className="p-2"><input className="w-full p-1 border rounded" value={editForm.managementTitle} onChange={e => setEditForm({...editForm, managementTitle: e.target.value})} /></td>
-                                  <td className="p-2"><input className="w-full p-1 border rounded" value={editForm.parentId} onChange={e => setEditForm({...editForm, parentId: e.target.value})} /></td>
+                                  <td className="p-2"><input className="w-full p-1 border rounded" value={editForm.id || ""} onChange={e => setEditForm({...editForm, id: e.target.value})} /></td>
+                                  <td className="p-2"><input className="w-full p-1 border rounded" value={editForm.name || ""} onChange={e => setEditForm({...editForm, name: e.target.value})} /></td>
+                                  <td className="p-2"><input className="w-full p-1 border rounded" value={editForm.title || ""} onChange={e => setEditForm({...editForm, title: e.target.value})} /></td>
+                                  <td className="p-2"><input className="w-full p-1 border rounded" value={editForm.managementTitle || ""} onChange={e => setEditForm({...editForm, managementTitle: e.target.value})} /></td>
+                                  <td className="p-2"><input className="w-full p-1 border rounded" value={editForm.parentId || ""} onChange={e => setEditForm({...editForm, parentId: e.target.value})} /></td>
                                   <td className="p-2 text-right">
                                     <button onClick={handleSaveEdit} className="text-green-600 hover:text-green-800 mr-2"><Icon name="Save" size={18}/></button>
                                     <button onClick={() => setEditingId(null)} className="text-stone-400 hover:text-stone-600">取消</button>
