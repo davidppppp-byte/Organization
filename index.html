@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Deafbakery 組織圖 (雲端穩定版)</title>
+  <title>Deafbakery 組織圖 (雲端版)</title>
   
   <!-- 1. 樣式庫 -->
   <script src="https://cdn.tailwindcss.com"></script>
 
-  <!-- 2. 核心程式庫 -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/17.0.2/umd/react.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/17.0.2/umd/react-dom.production.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+  <!-- 2. 核心程式庫 (恢復為 React 18，並加入 crossorigin 以正確捕捉錯誤) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js" crossorigin="anonymous"></script>
 
   <!-- 3. Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js" crossorigin="anonymous"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js" crossorigin="anonymous"></script>
   
   <style>
     body { background-color: #fff7ed; color: #44403c; font-family: sans-serif; overflow: hidden; }
@@ -53,9 +53,12 @@
       const el = document.getElementById('error-container');
       el.style.display = 'block';
       
-      const errText = (msg === 'Script error.' && !src) 
-        ? '瀏覽器安全性限制導致無法讀取錯誤 (CORS)。\n這通常發生在直接開啟檔案 (file://) 時。\n請嘗試：\n1. 確保網路連線正常\n2. 重新整理網頁' 
-        : (error ? error.toString() : msg);
+      let errText = msg;
+      if (msg === 'Script error.' && !src) {
+        errText = '瀏覽器安全性限制 (CORS Error)。\n如果您是直接點擊檔案 (file://) 開啟，部分瀏覽器會阻擋程式執行。\n請嘗試：\n1. 確保網路連線正常 (需要載入 React/Firebase)\n2. 重新整理網頁';
+      } else if (error) {
+        errText = error.toString();
+      }
         
       el.innerHTML = '<strong>⚠️ 系統發生錯誤:</strong><br>' + errText + '<br><small>位置: ' + (line || '未知') + '</small>';
       console.error("Global Error:", error || msg);
@@ -134,7 +137,6 @@
       return <svg width={size} height={size} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d={p[name] || "M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"} strokeLinecap="round" strokeLinejoin="round"/></svg>;
     };
 
-    // --- 預設資料 (備用輪胎) ---
     const INITIAL_DATA = [
       { id: "CEO", name: "潘信宏", title: "", managementTitle: "執行長", parentId: "" },
       { id: "COO", name: "潘重恩", title: "", managementTitle: "營運長", parentId: "CEO" },
@@ -257,7 +259,6 @@
     // --- 排序功能：有管理職稱者優先 (且不為空白) ---
     const sortChildren = (children) => {
       return children.sort((a, b) => {
-        // 取得管理職稱，若為 null/undefined 則視為空字串
         const aTitle = String(a.managementTitle || "").trim();
         const bTitle = String(b.managementTitle || "").trim();
         
@@ -275,12 +276,10 @@
       const lookup = {};
       const roots = [];
       
-      // 1. 初始化
       items.forEach(item => {
         lookup[item.id] = { ...item, children: [] };
       });
 
-      // 2. 建立關係
       items.forEach(item => {
         if (item.parentId && lookup[item.parentId]) {
           lookup[item.parentId].children.push(lookup[item.id]);
@@ -289,7 +288,6 @@
         }
       });
 
-      // 3. 排序所有子節點
       Object.values(lookup).forEach(node => {
         if (node.children.length > 0) {
           node.children = sortChildren(node.children);
@@ -666,7 +664,8 @@
       );
     }
 
-    ReactDOM.render(<App />, document.getElementById('root'));
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
   </script>
 </body>
 </html>
